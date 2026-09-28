@@ -1,5 +1,5 @@
 {
-  "note": "台北市＋新北市提供自費健檢（含胃腸鏡）的候選機構與方案入口頁，2026-09-28 蒐集。tier：center=醫學中心／大型醫院、chain=健檢連鎖或專門診所、regional=區域醫院。",
+  "note": "台北市＋新北市提供自費健檢（含胃腸鏡）的候選機構與方案入口頁，2026-09-28 蒐集。tier：center=醫學中心／大型醫院、chain=健檢連鎖或專門診所、regional=區域醫院。 2026-09-28 第二輪：容器出口為美國（Google Cloud），另以 WebFetch 從另一條海外路徑交叉測試，B2 結果一致，推測為擋海外／資料中心 IP，需台灣 IP 確認。",
   "sources": [
     {
       "id": "ntuh",
@@ -18,7 +18,7 @@
       "tier": "center",
       "url": "https://phys.vghtpe.gov.tw/",
       "category": "B2",
-      "finding": "HTTP 403",
+      "finding": "HTTP 403（容器與 WebFetch 兩條海外路徑皆被擋）；搜尋引擎可見方案頁，如「基礎一日含無痛胃腸鏡及低劑量肺部電腦斷層組套」 phys.vghtpe.gov.tw/c03.php?id=6",
       "fix": "台灣 IP 重測；仍擋則 headless"
     },
     {
@@ -38,7 +38,7 @@
       "tier": "center",
       "url": "https://wapps.mmh.org.tw/Health2015/Default.aspx",
       "category": "B2",
-      "finding": "連線被重置",
+      "finding": "連線被重置（兩條海外路徑皆失敗）；公開資訊顯示無痛胃腸鏡加選 4,500 元（麻醉與術前評估）",
       "fix": "台灣 IP 重測"
     },
     {
@@ -58,7 +58,7 @@
       "tier": "center",
       "url": "https://www.skh.org.tw/skh/8f12b7ac15.html",
       "category": "B2",
-      "finding": "連線被重置；腸胃健檢方案總覽頁存在",
+      "finding": "連線被重置（兩條海外路徑皆失敗）；搜尋引擎可見「精緻健檢」「精緻健檢 LDCT」等方案子頁",
       "fix": "台灣 IP 重測"
     },
     {
@@ -88,7 +88,7 @@
       "tier": "center",
       "url": "https://wfhweb.wanfang.gov.tw/I000/index.htm",
       "category": "B2",
-      "finding": "TLS 握手逾時",
+      "finding": "TLS 握手逾時（兩條海外路徑皆失敗）；另有線上選方案系統 wanfanghc.wanfang.gov.tw/healthOrder/choice.jsp",
       "fix": "台灣 IP 重測"
     },
     {
@@ -178,7 +178,7 @@
       "tier": "center",
       "url": "https://depart.femh.org.tw/hmc/",
       "category": "B2",
-      "finding": "連線中斷；組套在 depart.femh.org.tw/HMC",
+      "finding": "連線中斷（兩條海外路徑皆失敗）；組套頁 depart.femh.org.tw/HMC",
       "fix": "台灣 IP 重測"
     },
     {
