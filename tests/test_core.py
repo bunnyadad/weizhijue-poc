@@ -81,6 +81,11 @@ class MatchTest(unittest.TestCase):
         res, more, _ = self.run_q("台北 胃鏡 大腸鏡")
         self.assertIn("tpech", {r.inst_id for r in res + more})
 
+    def test_cheapest(self):
+        res, _, _ = self.run_q("台北 男 腸胃 最便宜的")
+        self.assertEqual(res[0].inst_id, "skh")
+        self.assertEqual(res[0].price, 27800)
+
     def test_stale(self):
         res, _, _ = search(parse("台北 胃鏡", CAT), CAT, date(2026, 12, 1))
         self.assertTrue(all(r.stale for r in res))

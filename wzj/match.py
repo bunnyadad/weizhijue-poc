@@ -112,12 +112,10 @@ def search(q: Query, cat: Catalog, today: date | None = None, limit: int = 3):
             (dropped if r.reasons else kept).append(r)
 
     kept = dedupe(kept)
-    kept.sort(key=lambda r: (
-        r.count(UNKNOWN),
-        r.price is None,
-        r.count(INFERRED),
-        r.price or 0,
-    ))
+    if q.cheapest:
+        kept.sort(key=lambda r: (r.price is None, r.price or 0))
+    else:
+        kept.sort(key=lambda r: (r.count(UNKNOWN), r.price is None, r.count(INFERRED), r.price or 0))
     return kept[:limit], kept[limit:], dropped
 
 

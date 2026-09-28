@@ -30,6 +30,15 @@ python -m wzj eval --from llm_output.json
 python -m unittest -v
 ```
 
+## 網頁版
+
+```bash
+python web/build.py        # 由 data/*.json 產生 web/index.html
+open web/index.html        # 直接用瀏覽器開，不需要伺服器
+```
+
+網頁版的解析與比對邏輯與 Python 版相同（`web/template.html`），改資料後重跑 build 即可。
+
 ## 結構
 
 | 路徑 | 內容 |
@@ -42,6 +51,7 @@ python -m unittest -v
 | `wzj/extract.py` | LLM 抽取介面（未接模型）＋逐欄評分 |
 | `wzj/watch.py` | 抓取、正規化、價格指紋比對、變動紀錄 |
 | `wzj/report.py` | 第 0 階段四個指標，數據不足一律標「未測」 |
+| `web/` | 單檔網頁版（模板＋build 腳本） |
 
 ## 資料判定
 

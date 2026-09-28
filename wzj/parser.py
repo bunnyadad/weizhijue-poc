@@ -14,6 +14,7 @@ class Query:
     budget: int | None = None
     gender: str | None = None
     required: list[str] = field(default_factory=list)
+    cheapest: bool = False
 
 
 def parse_budget(text: str) -> int | None:
@@ -44,6 +45,7 @@ def parse(text: str, cat: Catalog) -> Query:
             break
     q.budget = parse_budget(text)
     q.gender = parse_gender(text)
+    q.cheapest = bool(re.search(r"最便宜|便宜|省錢|最低價", text))
 
     lowered = text.lower()
     # 同義詞長的先比，避免「全大腸鏡」被拆成「大腸鏡」重複計算

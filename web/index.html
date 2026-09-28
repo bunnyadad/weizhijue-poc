@@ -1,0 +1,416 @@
+<title>微直覺健檢比對</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+:root{
+  --ground:#F3F5F2; --surface:#FFFFFF; --sunken:#E9EDE8; --line:#D5DCD5;
+  --ink:#1B2320; --muted:#5B6862; --faint:#8A958F;
+  --accent:#1E6A55; --accent-ink:#FFFFFF; --accent-soft:#DCEBE4;
+  --ok:#1D7449; --ok-soft:#DDF0E4; --warn:#9A5D0B; --warn-soft:#F7EAD2;
+  --bad:#B0362A; --bad-soft:#F6DEDA; --unk:#6B7570; --unk-soft:#E6E9E7;
+  --sans:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --ground:#121714; --surface:#1A211D; --sunken:#222A25; --line:#303A34;
+  --ink:#E4EBE6; --muted:#A1AEA7; --faint:#75827B;
+  --accent:#5DBB9A; --accent-ink:#0E1512; --accent-soft:#1F3A30;
+  --ok:#6CCB95; --ok-soft:#1C3527; --warn:#E0A650; --warn-soft:#3A2D17;
+  --bad:#EC8A7E; --bad-soft:#3E211D; --unk:#A3ADA8; --unk-soft:#2A322E;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#121714; --surface:#1A211D; --sunken:#222A25; --line:#303A34;
+  --ink:#E4EBE6; --muted:#A1AEA7; --faint:#75827B;
+  --accent:#5DBB9A; --accent-ink:#0E1512; --accent-soft:#1F3A30;
+  --ok:#6CCB95; --ok-soft:#1C3527; --warn:#E0A650; --warn-soft:#3A2D17;
+  --bad:#EC8A7E; --bad-soft:#3E211D; --unk:#A3ADA8; --unk-soft:#2A322E;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:15px/1.65 var(--sans);padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:980px;margin:0 auto}
+a{color:var(--accent)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;padding-block:28px 12px}
+.brand{display:flex;align-items:baseline;gap:12px}
+.brand h1{font:700 26px/1.2 var(--serif);margin:0;letter-spacing:.04em}
+.brand span{color:var(--muted);font-size:13px}
+nav{display:flex;gap:4px;background:var(--sunken);padding:4px;border-radius:10px}
+nav button{border:0;background:none;padding:6px 14px;border-radius:7px;cursor:pointer;color:var(--muted)}
+nav button[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+
+.search{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px}
+.qrow{display:flex;gap:8px}
+#q{flex:1;min-width:0;border:1px solid var(--line);background:var(--ground);border-radius:10px;padding:12px 14px;font-size:16px}
+.go{border:0;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:0 20px;font-weight:500;cursor:pointer;white-space:nowrap}
+.samples{display:flex;flex-wrap:wrap;gap:6px}
+.samples span{font-size:12px;color:var(--faint);align-self:center;margin-right:2px}
+.chip{border:1px solid var(--line);background:none;border-radius:999px;padding:3px 10px;font-size:13px;cursor:pointer;color:var(--muted)}
+.chip:hover{border-color:var(--accent);color:var(--ink)}
+
+.understood{display:grid;gap:10px;border-top:1px dashed var(--line);padding-top:12px}
+.label{font-size:12px;letter-spacing:.08em;color:var(--faint)}
+.fields{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.field{display:flex;align-items:center;gap:6px;font-size:14px}
+.field select,.field input{border:1px solid var(--line);background:var(--ground);border-radius:8px;padding:4px 8px}
+.field input{width:110px;font-family:var(--mono)}
+.need{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tag{display:inline-flex;align-items:center;gap:4px;background:var(--accent-soft);color:var(--ink);border-radius:999px;padding:2px 4px 2px 10px;font-size:13px}
+.tag button{border:0;background:none;cursor:pointer;color:var(--muted);padding:0 6px;font-size:15px;line-height:1}
+.need select{border:1px dashed var(--line);background:none;border-radius:999px;padding:2px 8px;font-size:13px;color:var(--muted)}
+
+.summary{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-block:22px 10px;color:var(--muted);font-size:14px}
+.summary b{color:var(--ink)}
+.results{display:grid;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;gap:12px}
+.card.compact{padding:12px 16px;gap:8px}
+.top{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:start}
+.rank{font:600 22px/1 var(--mono);color:var(--faint);padding-top:4px}
+.who h3{margin:0;font-size:17px;font-weight:700}
+.who p{margin:0;color:var(--muted);font-size:14px}
+.price{text-align:right}
+.price b{font:500 22px/1.2 var(--mono);font-variant-numeric:tabular-nums;display:block}
+.price small{color:var(--faint);font-size:12px}
+.price .na{font:500 15px var(--sans);color:var(--warn)}
+.pill{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:500;margin-top:4px}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.unk{background:var(--unk-soft);color:var(--unk)}
+.cov{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
+.cov li{display:flex;gap:8px;align-items:flex-start;padding:6px 10px;border-radius:8px;font-size:14px;background:var(--sunken)}
+.cov i{font-style:normal;font-weight:700;width:1.1em;text-align:center;flex:none}
+.cov .s{display:block;font-size:12px;color:var(--muted)}
+.cov .ok i{color:var(--ok)} .cov .warn i{color:var(--warn)} .cov .bad i{color:var(--bad)} .cov .unk i{color:var(--unk)}
+.meta{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;font-size:14px;margin:0}
+.meta dt{color:var(--faint)} .meta dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.stale{color:var(--warn)}
+.cta{justify-self:start;display:inline-flex;gap:6px;align-items:center;border:1px solid var(--accent);color:var(--accent);border-radius:9px;padding:5px 12px;text-decoration:none;font-size:14px;font-weight:500}
+
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 16px}
+details summary{cursor:pointer;color:var(--muted)}
+details ul{margin:8px 0 4px;padding-left:18px;font-size:14px}
+.stack{display:grid;gap:12px;margin-top:14px}
+.prep{background:var(--accent-soft);border-radius:12px;padding:14px 18px}
+.prep h4{margin:0 0 6px;font-size:14px}
+.prep ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:14px}
+.prep li::before{content:"□ ";color:var(--accent)}
+.note{font-size:13px;color:var(--faint);margin-top:18px}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:28px;text-align:center;color:var(--muted)}
+
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);background:var(--sunken);white-space:nowrap}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+h2{font-size:17px;margin:26px 0 10px}
+.metrics{display:grid;gap:10px}
+.metric{display:grid;grid-template-columns:1fr auto;gap:4px 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.metric h3{margin:0;font-size:15px}
+.metric .v{grid-column:1/-1;color:var(--muted);font-size:14px}
+.metric .v code{font-family:var(--mono);font-size:13px;background:var(--sunken);padding:0 4px;border-radius:4px}
+.verdict{font-size:12px;font-weight:500;border-radius:999px;padding:2px 10px;align-self:start}
+.verdict.go{background:var(--ok-soft);color:var(--ok)} .verdict.rethink{background:var(--bad-soft);color:var(--bad)} .verdict.na{background:var(--unk-soft);color:var(--unk)}
+p.lead{color:var(--muted);max-width:65ch}
+
+@media (max-width:560px){
+  .top{grid-template-columns:auto 1fr}
+  .price{grid-column:2;text-align:left}
+  .qrow{flex-direction:column}
+  .go{padding:10px}
+}
+@media (prefers-reduced-motion:no-preference){.card{animation:rise .25s ease-out both}}
+@keyframes rise{from{transform:translateY(4px)}to{transform:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><h1>微直覺</h1><span>PoC・台北腸胃健檢・官網抽樣 2026-09-28</span></div>
+    <nav role="tablist">
+      <button role="tab" id="tab-search" aria-selected="true" data-tab="search">搜尋</button>
+      <button role="tab" id="tab-data" aria-selected="false" data-tab="data">資料</button>
+      <button role="tab" id="tab-metrics" aria-selected="false" data-tab="metrics">驗證指標</button>
+    </nav>
+  </header>
+
+  <section id="pane-search">
+    <form class="search" id="form">
+      <div class="qrow">
+        <input id="q" autocomplete="off" aria-label="用一句話描述需求" placeholder="例如：台北、4 萬元內、想做無痛胃鏡加大腸鏡，女性">
+        <button class="go" type="submit">找方案</button>
+      </div>
+      <div class="samples" id="samples"><span>試試看</span></div>
+      <div class="understood">
+        <div class="label">系統理解為（可直接調整）</div>
+        <div class="fields">
+          <label class="field">地區 <select id="f-city"><option value="">不限</option><option>台北</option><option>新北</option></select></label>
+          <label class="field">預算上限 <input id="f-budget" inputmode="numeric" placeholder="不限"></label>
+          <label class="field">性別 <select id="f-gender"><option value="">不限</option><option value="F">女性</option><option value="M">男性</option></select></label>
+          <label class="field">排序 <select id="f-sort"><option value="conf">資料確認度優先</option><option value="price">價格最低優先</option></select></label>
+        </div>
+        <div class="need" id="need"></div>
+      </div>
+    </form>
+    <div id="out"></div>
+  </section>
+
+  <section id="pane-data" hidden>
+    <p class="lead">目前收錄的方案與來源。「推定」表示依方案名稱推測、尚未逐項核對；沒列出的項目一律視為未確認。</p>
+    <h2>方案</h2>
+    <div class="tablewrap"><table id="t-plans"></table></div>
+    <h2>來源</h2>
+    <div class="tablewrap"><table id="t-insts"></table></div>
+    <h2>標準項目 v0</h2>
+    <div class="tablewrap"><table id="t-items"></table></div>
+  </section>
+
+  <section id="pane-metrics" hidden>
+    <p class="lead">Proposal 第 0 階段的 Go / No-go 指標。沒有數據的一律標「未測」，不預估。</p>
+    <div class="metrics" id="metrics"></div>
+  </section>
+</div>
+
+<script>
+const D = {"taxonomy": {"version": "v0", "note": "標準項目依台灣自費健檢常見項目整理；popular=各健檢懶人包普遍列為熱門/推薦的項目。synonyms 為各家官網原文寫法，持續擴充。", "sources": ["https://www.twneed.org/post/44.html", "https://www.mornjoy.com.tw/new/guide-of-health-checkup", "https://www.kfsyscc.org/m/health_examination_price", "https://hmc.ntuh.gov.tw/examination-items-and-pricing"], "items": [{"id": "body", "name": "身體測量", "cat": "基礎", "synonyms": ["身高體重", "BMI", "腰圍", "身體組成分析", "體脂"]}, {"id": "bp", "name": "血壓脈搏", "cat": "基礎", "synonyms": ["血壓", "脈搏", "脈博"]}, {"id": "pe", "name": "醫師理學檢查", "cat": "基礎", "synonyms": ["理學檢查", "醫師問診", "身體檢查"]}, {"id": "urine", "name": "尿液常規", "cat": "基礎", "synonyms": ["尿液檢查", "尿液分析", "尿常規"]}, {"id": "fobt", "name": "糞便潛血", "cat": "腸胃", "popular": true, "synonyms": ["糞便潛血", "潛血", "FOBT", "FIT", "免疫法糞便潛血"]}, {"id": "cbc", "name": "全血球計數", "cat": "血液", "synonyms": ["血液常規", "CBC", "全套血液", "血球計數"]}, {"id": "liver", "name": "肝功能", "cat": "血液", "synonyms": ["肝功能", "GOT", "GPT", "AST", "ALT"]}, {"id": "kidney", "name": "腎功能", "cat": "血液", "synonyms": ["腎功能", "肌酸酐", "BUN", "eGFR"]}, {"id": "glucose", "name": "血糖", "cat": "血液", "synonyms": ["空腹血糖", "糖化血色素", "HbA1c", "血糖"]}, {"id": "lipid", "name": "血脂", "cat": "血液", "synonyms": ["血脂", "膽固醇", "三酸甘油酯", "LDL", "HDL"]}, {"id": "uric", "name": "尿酸", "cat": "血液", "synonyms": ["尿酸"]}, {"id": "thyroid_fn", "name": "甲狀腺功能", "cat": "血液", "synonyms": ["甲狀腺功能", "TSH", "Free T4"]}, {"id": "hep", "name": "B/C 型肝炎篩檢", "cat": "血液", "synonyms": ["B型肝炎", "C型肝炎", "B肝", "C肝", "HBsAg", "Anti-HCV"]}, {"id": "ecg", "name": "心電圖", "cat": "心血管", "synonyms": ["心電圖", "ECG", "EKG"]}, {"id": "cxr", "name": "胸部X光", "cat": "影像", "synonyms": ["胸部X光", "胸部 X 光", "胸部X光攝影", "CXR"]}, {"id": "ldct", "name": "低劑量肺部電腦斷層", "cat": "影像", "popular": true, "synonyms": ["LDCT", "低劑量電腦斷層", "低劑量肺部電腦斷層", "肺部電腦斷層", "肺部CT", "肺癌篩檢"], "replaces": ["cxr"]}, {"id": "egd", "name": "胃鏡", "cat": "腸胃", "popular": true, "synonyms": ["胃鏡", "上消化道內視鏡", "胃內視鏡", "食道胃十二指腸鏡"]}, {"id": "colonoscopy", "name": "大腸鏡", "cat": "腸胃", "popular": true, "synonyms": ["大腸鏡", "全大腸鏡", "下消化道內視鏡", "大腸內視鏡"]}, {"id": "sedation", "name": "無痛麻醉", "cat": "腸胃", "popular": true, "synonyms": ["無痛", "舒眠", "麻醉", "靜脈麻醉", "睡著做"]}, {"id": "hp", "name": "幽門桿菌檢測", "cat": "腸胃", "popular": true, "synonyms": ["幽門桿菌", "幽門螺旋桿菌", "碳13", "尿素呼氣", "HP"]}, {"id": "pepsinogen", "name": "胃蛋白酶原", "cat": "腸胃", "synonyms": ["胃蛋白酶原", "Pepsinogen", "PG I/II"]}, {"id": "abd_us", "name": "腹部超音波", "cat": "超音波", "popular": true, "synonyms": ["腹部超音波", "上腹部超音波", "肝膽超音波"]}, {"id": "cea", "name": "CEA", "cat": "腫瘤標記", "popular": true, "synonyms": ["CEA", "癌胚抗原"]}, {"id": "afp", "name": "AFP", "cat": "腫瘤標記", "popular": true, "synonyms": ["AFP", "甲型胎兒蛋白"]}, {"id": "ca199", "name": "CA19-9", "cat": "腫瘤標記", "synonyms": ["CA19-9", "CA199", "CA 19-9"]}, {"id": "ca125", "name": "CA-125", "cat": "腫瘤標記", "gender": "F", "synonyms": ["CA-125", "CA125", "CA 125"]}, {"id": "ca153", "name": "CA-153", "cat": "腫瘤標記", "gender": "F", "synonyms": ["CA-153", "CA153", "CA15-3"]}, {"id": "psa", "name": "PSA", "cat": "腫瘤標記", "gender": "M", "synonyms": ["PSA", "攝護腺特異抗原"]}, {"id": "thyroid_us", "name": "甲狀腺超音波", "cat": "超音波", "popular": true, "synonyms": ["甲狀腺超音波"]}, {"id": "breast_us", "name": "乳房超音波", "cat": "超音波", "gender": "F", "popular": true, "synonyms": ["乳房超音波"]}, {"id": "mammo", "name": "乳房攝影", "cat": "影像", "gender": "F", "synonyms": ["乳房X光", "乳房攝影", "3D乳房攝影", "3D乳房斷層", "乳房斷層攝影"]}, {"id": "gyn_us", "name": "婦科超音波", "cat": "超音波", "gender": "F", "synonyms": ["婦科超音波", "骨盆腔超音波", "陰道超音波"]}, {"id": "pap", "name": "子宮頸抹片／HPV", "cat": "婦科", "gender": "F", "synonyms": ["子宮頸抹片", "抹片", "HPV", "人類乳突病毒"]}, {"id": "prostate_us", "name": "攝護腺超音波", "cat": "超音波", "gender": "M", "synonyms": ["攝護腺超音波", "前列腺超音波"]}, {"id": "bmd", "name": "骨密度", "cat": "影像", "popular": true, "synonyms": ["骨密度", "骨質密度", "DXA", "骨質疏鬆"]}, {"id": "carotid_us", "name": "頸動脈超音波", "cat": "超音波", "synonyms": ["頸動脈超音波"]}, {"id": "echo", "name": "心臟超音波", "cat": "超音波", "synonyms": ["心臟超音波"]}], "needs": {"腸胃": {"required": ["egd", "colonoscopy"], "note": "Proposal 第 0 階段門檻：胃鏡＋大腸鏡為必要"}}}, "plans": {"note": "種子資料來自 Proposal v0.2 官網抽樣（2026-09-28）。items 只記官網明確看到的；inferred 為依方案名稱推定、尚未逐項確認；未列出者一律視為「未確認」。normalize_minutes 為人工標準化耗時，待逐筆記錄。", "institutions": [{"id": "ntuh", "name": "臺大健康管理中心", "city": "台北", "source_url": "https://hmc.ntuh.gov.tw/examination-items-and-pricing", "source_format": "html_table", "booking": {"method": "線上系統（需登入）", "reply_days": 0, "calendar": "公開名額日曆（到日）"}}, {"id": "lianan", "name": "聯安診所", "city": "台北", "source_url": "https://www.lianan.com.tw/health/personal/package", "source_format": "js_render", "booking": {"method": "表單", "reply_days": 2, "calendar": null}, "notes": "2026-09-28 實測：方案頁為 JS 渲染，直接抓取只拿到外殼、沒有價格，需 headless browser"}, {"id": "mj", "name": "美兆（台北）", "city": "台北", "source_url": "https://www.mjhealth.com/", "source_format": "json_api", "booking": {"method": "表單", "reply_days": 3, "calendar": null}, "notes": "官網資料有 updatedAt，可作變動偵測依據；2026-09-28 本 PoC 環境連線被重置，需在一般網路重測"}, {"id": "skh", "name": "新光醫院", "city": "台北", "source_url": "https://www.skh.org.tw/", "source_format": "unknown", "booking": {"method": "表單／傳真／電話", "reply_days": null, "calendar": null}, "notes": "方案頁網址待補；2026-09-28 本 PoC 環境連線被重置，需在一般網路重測"}, {"id": "tpech", "name": "北市聯醫", "city": "台北", "source_url": "https://tpech.gov.taipei/cp.aspx?n=5001A86B6DA37F16", "source_format": "pdf", "booking": {"method": "電話 (02)2555-3000", "reply_days": null, "calendar": null}, "notes": "公告 2026-10-01 起調整專案價；明細 PDF 為 2023 版；非健保身分 1.3 倍計價；2026-09-28 實測：總覽頁無價格，需進子頁或 PDF"}], "plans": [{"id": "ntuh-base-m", "inst": "ntuh", "name": "基礎標準套裝（男）", "kind": "base", "gender": "M", "price": 23000, "items": {"ldct": "yes"}, "confirmed_at": "2026-09-28", "normalize_minutes": null}, {"id": "ntuh-base-f", "inst": "ntuh", "name": "基礎標準套裝（女）", "kind": "base", "gender": "F", "price": 25000, "items": {"ldct": "yes"}, "confirmed_at": "2026-09-28", "normalize_minutes": null}, {"id": "ntuh-gi", "inst": "ntuh", "name": "胃腸鏡套裝（加選）", "kind": "addon", "gender": "all", "price": 13700, "items": {"egd": "yes", "colonoscopy": "yes", "sedation": "yes"}, "extra_fees": ["內視鏡耗材另計"], "confirmed_at": "2026-09-28", "normalize_minutes": null}, {"id": "lianan-adv-b-gi", "inst": "lianan", "name": "進階B-腸胃", "kind": "fixed", "gender": "all", "price": 39600, "items": {}, "inferred": ["egd", "colonoscopy"], "choices": [["breast_us", "mammo"]], "extra_fees": ["報告翻譯等另計"], "confirmed_at": "2026-09-28", "normalize_minutes": null}, {"id": "mj-gi", "inst": "mj", "name": "腸胃健康", "kind": "fixed", "gender": "all", "price": 28900, "items": {"hp": "yes", "pepsinogen": "yes", "ca199": "no", "psa": "no", "ca125": "no"}, "inferred": ["egd", "colonoscopy"], "confirmed_at": "2026-09-28", "normalize_minutes": null}, {"id": "skh-fine-m", "inst": "skh", "name": "精緻健檢", "kind": "fixed", "gender": "M", "price": 27800, "items": {"cxr": "yes", "fobt": "no"}, "inferred": ["egd", "colonoscopy"], "confirmed_at": "2026-09-28", "normalize_minutes": null}, {"id": "skh-fine-m-ldct", "inst": "skh", "name": "精緻健檢＋LDCT", "kind": "fixed", "gender": "M", "price": 32000, "items": {"ldct": "yes", "fobt": "no"}, "inferred": ["egd", "colonoscopy"], "confirmed_at": "2026-09-28", "normalize_minutes": null}, {"id": "skh-women", "inst": "skh", "name": "婦女健檢", "kind": "fixed", "gender": "F", "price": 32600, "items": {"cxr": "yes", "fobt": "no"}, "inferred": ["egd", "colonoscopy"], "confirmed_at": "2026-09-28", "normalize_minutes": null}, {"id": "skh-women-ldct", "inst": "skh", "name": "婦女健檢＋LDCT", "kind": "fixed", "gender": "F", "price": 36800, "items": {"ldct": "yes", "fobt": "no"}, "inferred": ["egd", "colonoscopy"], "confirmed_at": "2026-09-28", "normalize_minutes": null}, {"id": "tpech-gi", "inst": "tpech", "name": "腸道健康檢查方案", "kind": "fixed", "gender": "all", "price": null, "items": {}, "confirmed_at": "2026-09-28", "normalize_minutes": null, "notes": "網頁未公開價格，2026-10-01 起調價"}]}};
+const QUERIES = ["台北、4 萬元內、想做無痛胃鏡加大腸鏡，女性。", "台北 3 萬以內 男生 胃鏡大腸鏡都要", "臺北，預算 35000，女性，腸胃加上乳房超音波", "台北 男 想要胃鏡大腸鏡還有低劑量電腦斷層", "台北 女 腸胃健檢 要有幽門桿菌", "台北 預算3萬5 男 無痛大腸鏡 胃鏡 腫瘤標記CEA", "台北 女生 胃鏡 大腸鏡 甲狀腺超音波 4 萬內", "台北 男 腸胃 最便宜的", "台北 女 胃鏡大腸鏡 乳房超音波和乳房攝影都要", "台北 5 萬內 男 胃鏡 大腸鏡 LDCT 腹部超音波"];
+
+const ITEMS = Object.fromEntries(D.taxonomy.items.map(i => [i.id, {replaces: [], ...i}]));
+const INSTS = Object.fromEntries(D.plans.institutions.map(i => [i.id, i]));
+const PLANS = D.plans.plans.map(p => ({items: {}, inferred: [], choices: [], extra_fees: [], ...p}));
+const NEEDS = D.taxonomy.needs || {};
+const TODAY = new Date();
+const STALE_DAYS = 30;
+const name = id => ITEMS[id] ? ITEMS[id].name : id;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const money = n => n.toLocaleString("zh-TW");
+
+// ---- 解析（與 wzj/parser.py 相同規則）
+const CITIES = [["台北", "台北"], ["臺北", "台北"], ["北市", "台北"], ["新北", "新北"]];
+function parseBudget(t) {
+  let m = /(\d+(?:\.\d+)?)\s*萬(\d)?/.exec(t);
+  if (m) return Math.round(parseFloat(m[1]) * 10000) + (m[2] ? +m[2] * 1000 : 0);
+  m = /(\d{1,3}(?:,\d{3})+|\d{4,6})\s*(?:元|塊)?\s*(?:內|以內|以下|左右)?/.exec(t);
+  return m ? +m[1].replace(/,/g, "") : null;
+}
+function parse(text) {
+  const q = {text, city: null, budget: parseBudget(text), gender: null, required: [], cheapest: /最便宜|便宜|省錢|最低價/.test(text)};
+  for (const [k, v] of CITIES) if (text.includes(k)) { q.city = v; break; }
+  if (/女|婦/.test(text)) q.gender = "F"; else if (/男|先生/.test(text)) q.gender = "M";
+  const lower = text.toLowerCase();
+  const pairs = Object.values(ITEMS).flatMap(it => [it.name, ...it.synonyms].map(s => [s, it.id])).sort((a, b) => b[0].length - a[0].length);
+  const taken = new Array(text.length).fill(false), found = new Map();
+  for (const [syn, id] of pairs) {
+    const s = syn.toLowerCase();
+    let at = lower.indexOf(s);
+    while (at !== -1) {
+      let free = true;
+      for (let i = at; i < at + s.length; i++) if (taken[i]) { free = false; break; }
+      if (free) { for (let i = at; i < at + s.length; i++) taken[i] = true; if (!found.has(id)) found.set(id, at); }
+      at = lower.indexOf(s, at + 1);
+    }
+  }
+  for (const [need, spec] of Object.entries(NEEDS)) {
+    const pos = text.indexOf(need);
+    if (pos !== -1) for (const id of spec.required) if (!found.has(id)) found.set(id, pos);
+  }
+  q.required = [...found.entries()].sort((a, b) => a[1] - b[1]).map(e => e[0]);
+  return q;
+}
+
+// ---- 比對（與 wzj/match.py 相同規則）
+const YES = "有", INFERRED = "推定有", CHOICE = "二選一", REPLACED = "被取代", NO = "沒有", UNKNOWN = "未確認";
+const OK = new Set([YES, INFERRED, CHOICE, REPLACED]);
+
+function configs(plans) {
+  const out = plans.filter(p => p.kind === "fixed").map(p => [p]);
+  const bases = plans.filter(p => p.kind === "base"), addons = plans.filter(p => p.kind === "addon");
+  const combos = [[]];
+  for (let i = 0; i < addons.length; i++) {
+    combos.push([addons[i]]);
+    for (let j = i + 1; j < addons.length; j++) combos.push([addons[i], addons[j]]);
+  }
+  for (const b of bases) for (const c of combos) out.push([b, ...c]);
+  return out;
+}
+function itemState(parts, id) {
+  for (const p of parts) if (p.items[id] === "yes") return [YES, p.name];
+  for (const p of parts) for (const g of p.choices) if (g.includes(id))
+    return [CHOICE, "與" + g.filter(x => x !== id).map(name).join("／") + "二選一"];
+  for (const p of parts) for (const [rid, st] of Object.entries(p.items))
+    if (st === "yes" && ITEMS[rid].replaces.includes(id)) return [REPLACED, "由" + name(rid) + "取代"];
+  for (const p of parts) if (p.inferred.includes(id)) return [INFERRED, "依方案名稱推定，待逐項確認"];
+  if (parts.some(p => p.items[id] === "no")) return [NO, "官網明列不含"];
+  return [UNKNOWN, "資料尚未確認"];
+}
+function evaluate(parts, q) {
+  const cov = Object.fromEntries(q.required.map(id => [id, itemState(parts, id)]));
+  for (const p of parts) for (const g of p.choices) {
+    const hit = q.required.filter(i => g.includes(i) && cov[i][0] === CHOICE);
+    for (const i of hit.slice(1)) cov[i] = [NO, "與" + name(hit[0]) + "二選一，無法同時做"];
+  }
+  const missing = Object.values(ITEMS)
+    .filter(it => it.popular && !q.required.includes(it.id) && (!it.gender || !q.gender || it.gender === q.gender))
+    .filter(it => itemState(parts, it.id)[0] === NO).map(it => it.id);
+  const price = parts.some(p => p.price == null) ? null : parts.reduce((s, p) => s + p.price, 0);
+  const confirmed = parts.map(p => p.confirmed_at).sort()[0];
+  const stale = (TODAY - new Date(confirmed)) / 864e5 > STALE_DAYS;
+  const count = (...st) => Object.values(cov).filter(([s]) => st.includes(s)).length;
+  return {parts, inst: parts[0].inst, price, cov, missing, fees: parts.flatMap(p => p.extra_fees), confirmed, stale, count, reasons: [],
+          name: parts.map(p => p.name).join("＋")};
+}
+function search(q) {
+  const byInst = {};
+  for (const p of PLANS) {
+    if (q.city && INSTS[p.inst].city !== q.city) continue;
+    if (q.gender && !["all", q.gender].includes(p.gender)) continue;
+    (byInst[p.inst] ||= []).push(p);
+  }
+  let kept = [], dropped = [];
+  for (const plans of Object.values(byInst)) for (const parts of configs(plans)) {
+    const r = evaluate(parts, q);
+    if (r.count(NO)) r.reasons.push("缺少：" + Object.entries(r.cov).filter(([, [s]]) => s === NO).map(([i]) => name(i)).join("、"));
+    if (q.budget && r.price && r.price > q.budget) r.reasons.push("超出預算（" + money(r.price) + "）");
+    (r.reasons.length ? dropped : kept).push(r);
+  }
+  const rank = r => [r.count(UNKNOWN), r.count(INFERRED), r.price ?? 1e9];
+  const best = new Map();
+  for (const r of kept) {
+    const key = r.inst + "|" + r.parts.filter(p => p.kind === "fixed").map(p => p.id).sort().join(",");
+    const cur = best.get(key);
+    if (!cur || cmp(rank(r), rank(cur)) < 0) best.set(key, r);
+  }
+  kept = [...best.values()];
+  kept.sort((a, b) => q.cheapest
+    ? cmp([a.price == null, a.price ?? 0], [b.price == null, b.price ?? 0])
+    : cmp([a.count(UNKNOWN), a.price == null, a.count(INFERRED), a.price ?? 0], [b.count(UNKNOWN), b.price == null, b.count(INFERRED), b.price ?? 0]));
+  return {kept, dropped};
+}
+function cmp(a, b) { for (let i = 0; i < a.length; i++) { const x = +a[i], y = +b[i]; if (x !== y) return x - y; } return 0; }
+
+// ---- 畫面
+const $ = id => document.getElementById(id);
+let current = null;
+
+function renderNeed(q) {
+  const tags = q.required.map(id => `<span class="tag">${esc(name(id))}<button type="button" aria-label="移除${esc(name(id))}" data-rm="${id}">×</button></span>`).join("");
+  const cats = {};
+  for (const it of Object.values(ITEMS)) if (!q.required.includes(it.id)) (cats[it.cat] ||= []).push(it);
+  const opts = Object.entries(cats).map(([c, list]) => `<optgroup label="${esc(c)}">${list.map(it => `<option value="${it.id}">${esc(it.name)}</option>`).join("")}</optgroup>`).join("");
+  $("need").innerHTML = `<span class="label">必要項目</span>${tags || '<span class="label">（未指定）</span>'}<select id="f-add" aria-label="加入項目"><option value="">＋ 加項目</option>${opts}</select>`;
+}
+
+function covClass(s) { return s === YES || s === REPLACED || s === CHOICE ? "ok" : s === INFERRED ? "warn" : s === NO ? "bad" : "unk"; }
+function covMark(s) { return s === NO ? "✗" : s === UNKNOWN || s === INFERRED ? "?" : "✓"; }
+
+function card(r, n, compact) {
+  const inst = INSTS[r.inst], b = inst.booking;
+  const unk = r.count(UNKNOWN), inf = r.count(INFERRED);
+  const pill = unk ? `<span class="pill unk">${unk} 項未確認</span>` : inf ? `<span class="pill warn">${inf} 項為推定</span>` : `<span class="pill ok">需求項目皆已確認</span>`;
+  const price = r.price != null ? `<b>${money(r.price)}</b><small>元（NT$）</small>` : `<b class="na">價格未公開</b>`;
+  const cov = Object.entries(r.cov).map(([id, [s, why]]) =>
+    `<li class="${covClass(s)}"><i>${covMark(s)}</i><span>${esc(name(id))}：${s}${s !== YES ? `<span class="s">${esc(why)}</span>` : ""}</span></li>`).join("");
+  const reply = b.reply_days ? `，約 ${b.reply_days} 個工作天回覆` : "";
+  const meta = [
+    r.missing.length ? ["此方案沒有", r.missing.map(name).join("、")] : null,
+    r.fees.length ? ["另計", r.fees.join("、")] : null,
+    ["預約", b.method + reply + (b.calendar ? "；" + b.calendar : "")],
+    ["最後確認", r.confirmed + (r.stale ? `<span class="stale">（已超過 ${STALE_DAYS} 天，請以官網為準）</span>` : "")],
+    inst.notes ? ["注意", esc(inst.notes)] : null,
+  ].filter(Boolean).map(([k, v]) => `<dt>${k}</dt><dd>${k === "最後確認" || k === "注意" ? v : esc(v)}</dd>`).join("");
+  return `<article class="card${compact ? " compact" : ""}">
+    <div class="top"><div class="rank">${n}</div>
+      <div class="who"><h3>${esc(inst.name)}</h3><p>${esc(r.name)}</p>${pill}</div>
+      <div class="price">${price}</div></div>
+    ${cov ? `<ul class="cov">${cov}</ul>` : ""}
+    ${compact ? "" : `<dl class="meta">${meta}</dl>`}
+    <a class="cta" href="${esc(inst.source_url)}" target="_blank" rel="noopener">前往官方頁面 ↗</a>
+  </article>`;
+}
+
+const PREP = {
+  common: ["身分證字號、生日、聯絡電話（預約表單必填）", "檢查前一晚起空腹（依機構通知）"],
+  colonoscopy: ["大腸鏡需依指示清腸，通常前幾天開始低渣飲食", "確認機構寄送清腸藥的方式與時間"],
+  sedation: ["無痛麻醉須有陪同者，當天不可開車或騎車"],
+};
+
+function run() {
+  const q = current;
+  $("f-city").value = q.city || "";
+  $("f-budget").value = q.budget ? q.budget : "";
+  $("f-gender").value = q.gender || "";
+  $("f-sort").value = q.cheapest ? "price" : "conf";
+  renderNeed(q);
+  const {kept, dropped} = search(q);
+  const top = kept.slice(0, 3), more = kept.slice(3);
+  const g = {F: "女性", M: "男性"}[q.gender] || "不限性別";
+  let html = `<div class="summary"><span>找到 <b>${kept.length}</b> 個符合的組合，排除 <b>${dropped.length}</b> 個</span><span>${esc(q.city || "不限地區")}・${q.budget ? money(q.budget) + " 元內" : "不限預算"}・${g}</span></div>`;
+  html += top.length ? `<div class="results">${top.map((r, i) => card(r, i + 1)).join("")}</div>` : `<div class="empty">沒有符合的方案。試著放寬預算，或移除幾個必要項目。</div>`;
+  html += `<div class="stack">`;
+  if (more.length) html += `<details><summary>另外 ${more.length} 個也符合的組合</summary><div class="results" style="margin-top:10px">${more.map((r, i) => card(r, i + 4, true)).join("")}</div></details>`;
+  if (dropped.length) html += `<details><summary>被排除的 ${dropped.length} 個組合與原因</summary><ul>${dropped.map(r => `<li>${esc(INSTS[r.inst].name)}｜${esc(r.name)}：${esc(r.reasons.join("；"))}</li>`).join("")}</ul></details>`;
+  if (top.length) {
+    const prep = [...PREP.common, ...["colonoscopy", "sedation"].filter(k => q.required.includes(k)).flatMap(k => PREP[k])];
+    html += `<div class="prep"><h4>預約準備清單</h4><ul>${prep.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`;
+  }
+  html += `</div><p class="note">本工具只呈現方案內容，不構成醫療建議；檢查項目請與醫師討論，價格與內容以官方為準。資料為 PoC 抽樣，未涵蓋所有機構。</p>`;
+  $("out").innerHTML = html;
+}
+
+function submit(text) {
+  $("q").value = text;
+  current = parse(text);
+  run();
+}
+
+$("form").addEventListener("submit", e => { e.preventDefault(); submit($("q").value.trim()); });
+$("samples").insertAdjacentHTML("beforeend", QUERIES.map(t => `<button type="button" class="chip">${esc(t)}</button>`).join(""));
+$("samples").addEventListener("click", e => { if (e.target.matches(".chip")) submit(e.target.textContent); });
+$("f-city").addEventListener("change", e => { current.city = e.target.value || null; run(); });
+$("f-gender").addEventListener("change", e => { current.gender = e.target.value || null; run(); });
+$("f-sort").addEventListener("change", e => { current.cheapest = e.target.value === "price"; run(); });
+$("f-budget").addEventListener("change", e => { const v = parseBudget(e.target.value) ?? (parseInt(e.target.value, 10) || null); current.budget = v; run(); });
+$("need").addEventListener("click", e => { const id = e.target.dataset.rm; if (id) { current.required = current.required.filter(x => x !== id); run(); } });
+$("need").addEventListener("change", e => { if (e.target.id === "f-add" && e.target.value) { current.required.push(e.target.value); run(); } });
+
+// ---- 資料與指標
+const FMT = {html_table: "HTML 表格", json_api: "JSON API", graphql: "GraphQL", js_render: "JS 渲染", pdf: "PDF／子頁", unknown: "未確認"};
+const AUTO = new Set(["html_table", "json_api", "graphql"]);
+const KIND = {fixed: "固定套裝", base: "基礎", addon: "加選"};
+const GEN = {M: "男", F: "女", all: "不限"};
+$("t-plans").innerHTML = `<tr><th>機構</th><th>方案</th><th>類型</th><th>性別</th><th>價格</th><th>已確認</th><th>推定</th><th>二選一</th><th>另計</th></tr>` +
+  PLANS.map(p => `<tr><td>${esc(INSTS[p.inst].name)}</td><td>${esc(p.name)}</td><td>${KIND[p.kind]}</td><td>${GEN[p.gender]}</td>
+    <td class="num">${p.price != null ? money(p.price) : "未公開"}</td>
+    <td>${Object.entries(p.items).map(([i, s]) => (s === "yes" ? "✓" : "✗") + name(i)).join("、") || "—"}</td>
+    <td>${p.inferred.map(name).join("、") || "—"}</td><td>${p.choices.map(g => g.map(name).join("／")).join("；") || "—"}</td>
+    <td>${esc(p.extra_fees.join("、")) || "—"}</td></tr>`).join("");
+$("t-insts").innerHTML = `<tr><th>機構</th><th>來源格式</th><th>預約方式</th><th>備註</th></tr>` +
+  Object.values(INSTS).map(i => `<tr><td><a href="${esc(i.source_url)}" target="_blank" rel="noopener">${esc(i.name)}</a></td><td>${FMT[i.source_format] || i.source_format}</td><td>${esc(i.booking.method)}</td><td>${esc(i.notes || "")}</td></tr>`).join("");
+$("t-items").innerHTML = `<tr><th>分類</th><th>項目</th><th>熱門</th><th>限定</th><th>各家寫法（同義詞）</th></tr>` +
+  Object.values(ITEMS).map(i => `<tr><td>${esc(i.cat)}</td><td>${esc(i.name)}${i.replaces.length ? `<br><small>可取代${i.replaces.map(name).join("、")}</small>` : ""}</td><td>${i.popular ? "★" : ""}</td><td>${i.gender ? GEN[i.gender] : ""}</td><td>${esc(i.synonyms.join("、"))}</td></tr>`).join("");
+
+const insts = Object.values(INSTS), auto = insts.filter(i => AUTO.has(i.source_format)).length;
+const conf = PLANS.reduce((s, p) => s + Object.keys(p.items).length, 0), inf = PLANS.reduce((s, p) => s + p.inferred.length, 0);
+const METRICS = [
+  ["通用 AI 錯誤率", "門檻：價格或項目錯誤 ≥ 30% 才繼續", "未測。用 <code>python -m wzj bench</code> 產生 10 句對照表，填入 ChatGPT／Perplexity 回答後評分。", "na", "未測"],
+  ["每筆人工標準化時間", "門檻：≤ 10 分鐘", "未測。逐筆補齊項目清單時用 <code>python -m wzj log-time</code> 記錄。", "na", "未測"],
+  ["兩週變動率", "門檻：每週維護 1–2 小時可應付", "觀察中。需在一般網路每週跑 <code>python -m wzj watch</code>；已改用價格指紋比對，避免全文 hash 誤報。", "na", "觀察中"],
+  ["可自動化來源比例", "門檻：≥ 50%", `${auto}/${insts.length}（${Math.round(auto / insts.length * 100)}%）。臺大 HTML 可直接抓價；聯安為 JS 渲染、北市聯醫價格在子頁或 PDF；美兆、新光在 PoC 環境連線失敗，待一般網路重測。`, auto / insts.length >= .5 ? "go" : "rethink", auto / insts.length >= .5 ? "繼續" : "偏負面"],
+  ["資料完整度（參考）", "", `${PLANS.length} 筆方案；已確認欄位 ${conf}、推定 ${inf}；價格未公開 ${PLANS.filter(p => p.price == null).length} 筆。`, "na", "參考"],
+];
+$("metrics").innerHTML = METRICS.map(([t, th, v, c, label]) => `<div class="metric"><h3>${t}${th ? `<br><small style="font-weight:400;color:var(--faint)">${th}</small>` : ""}</h3><span class="verdict ${c}">${label}</span><div class="v">${v}</div></div>`).join("");
+
+// ---- 分頁
+function show(tab) {
+  for (const b of document.querySelectorAll("nav button")) b.setAttribute("aria-selected", b.dataset.tab === tab);
+  for (const t of ["search", "data", "metrics"]) $("pane-" + t).hidden = t !== tab;
+}
+document.querySelector("nav").addEventListener("click", e => { if (e.target.dataset.tab) show(e.target.dataset.tab); });
+if (["data", "metrics"].includes(location.hash.slice(1))) show(location.hash.slice(1));
+
+submit(QUERIES[0]);
+</script>
