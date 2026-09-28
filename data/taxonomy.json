@@ -1,0 +1,52 @@
+{
+  "version": "v0",
+  "note": "標準項目依台灣自費健檢常見項目整理；popular=各健檢懶人包普遍列為熱門/推薦的項目。synonyms 為各家官網原文寫法，持續擴充。",
+  "sources": [
+    "https://www.twneed.org/post/44.html",
+    "https://www.mornjoy.com.tw/new/guide-of-health-checkup",
+    "https://www.kfsyscc.org/m/health_examination_price",
+    "https://hmc.ntuh.gov.tw/examination-items-and-pricing"
+  ],
+  "items": [
+    {"id": "body", "name": "身體測量", "cat": "基礎", "synonyms": ["身高體重", "BMI", "腰圍", "身體組成分析", "體脂"]},
+    {"id": "bp", "name": "血壓脈搏", "cat": "基礎", "synonyms": ["血壓", "脈搏", "脈博"]},
+    {"id": "pe", "name": "醫師理學檢查", "cat": "基礎", "synonyms": ["理學檢查", "醫師問診", "身體檢查"]},
+    {"id": "urine", "name": "尿液常規", "cat": "基礎", "synonyms": ["尿液檢查", "尿液分析", "尿常規"]},
+    {"id": "fobt", "name": "糞便潛血", "cat": "腸胃", "popular": true, "synonyms": ["糞便潛血", "潛血", "FOBT", "FIT", "免疫法糞便潛血"]},
+    {"id": "cbc", "name": "全血球計數", "cat": "血液", "synonyms": ["血液常規", "CBC", "全套血液", "血球計數"]},
+    {"id": "liver", "name": "肝功能", "cat": "血液", "synonyms": ["肝功能", "GOT", "GPT", "AST", "ALT"]},
+    {"id": "kidney", "name": "腎功能", "cat": "血液", "synonyms": ["腎功能", "肌酸酐", "BUN", "eGFR"]},
+    {"id": "glucose", "name": "血糖", "cat": "血液", "synonyms": ["空腹血糖", "糖化血色素", "HbA1c", "血糖"]},
+    {"id": "lipid", "name": "血脂", "cat": "血液", "synonyms": ["血脂", "膽固醇", "三酸甘油酯", "LDL", "HDL"]},
+    {"id": "uric", "name": "尿酸", "cat": "血液", "synonyms": ["尿酸"]},
+    {"id": "thyroid_fn", "name": "甲狀腺功能", "cat": "血液", "synonyms": ["甲狀腺功能", "TSH", "Free T4"]},
+    {"id": "hep", "name": "B/C 型肝炎篩檢", "cat": "血液", "synonyms": ["B型肝炎", "C型肝炎", "B肝", "C肝", "HBsAg", "Anti-HCV"]},
+    {"id": "ecg", "name": "心電圖", "cat": "心血管", "synonyms": ["心電圖", "ECG", "EKG"]},
+    {"id": "cxr", "name": "胸部X光", "cat": "影像", "synonyms": ["胸部X光", "胸部 X 光", "胸部X光攝影", "CXR"]},
+    {"id": "ldct", "name": "低劑量肺部電腦斷層", "cat": "影像", "popular": true, "synonyms": ["LDCT", "低劑量電腦斷層", "低劑量肺部電腦斷層", "肺部電腦斷層", "肺部CT", "肺癌篩檢"], "replaces": ["cxr"]},
+    {"id": "egd", "name": "胃鏡", "cat": "腸胃", "popular": true, "synonyms": ["胃鏡", "上消化道內視鏡", "胃內視鏡", "食道胃十二指腸鏡"]},
+    {"id": "colonoscopy", "name": "大腸鏡", "cat": "腸胃", "popular": true, "synonyms": ["大腸鏡", "全大腸鏡", "下消化道內視鏡", "大腸內視鏡"]},
+    {"id": "sedation", "name": "無痛麻醉", "cat": "腸胃", "popular": true, "synonyms": ["無痛", "舒眠", "麻醉", "靜脈麻醉", "睡著做"]},
+    {"id": "hp", "name": "幽門桿菌檢測", "cat": "腸胃", "popular": true, "synonyms": ["幽門桿菌", "幽門螺旋桿菌", "碳13", "尿素呼氣", "HP"]},
+    {"id": "pepsinogen", "name": "胃蛋白酶原", "cat": "腸胃", "synonyms": ["胃蛋白酶原", "Pepsinogen", "PG I/II"]},
+    {"id": "abd_us", "name": "腹部超音波", "cat": "超音波", "popular": true, "synonyms": ["腹部超音波", "上腹部超音波", "肝膽超音波"]},
+    {"id": "cea", "name": "CEA", "cat": "腫瘤標記", "popular": true, "synonyms": ["CEA", "癌胚抗原"]},
+    {"id": "afp", "name": "AFP", "cat": "腫瘤標記", "popular": true, "synonyms": ["AFP", "甲型胎兒蛋白"]},
+    {"id": "ca199", "name": "CA19-9", "cat": "腫瘤標記", "synonyms": ["CA19-9", "CA199", "CA 19-9"]},
+    {"id": "ca125", "name": "CA-125", "cat": "腫瘤標記", "gender": "F", "synonyms": ["CA-125", "CA125", "CA 125"]},
+    {"id": "ca153", "name": "CA-153", "cat": "腫瘤標記", "gender": "F", "synonyms": ["CA-153", "CA153", "CA15-3"]},
+    {"id": "psa", "name": "PSA", "cat": "腫瘤標記", "gender": "M", "synonyms": ["PSA", "攝護腺特異抗原"]},
+    {"id": "thyroid_us", "name": "甲狀腺超音波", "cat": "超音波", "popular": true, "synonyms": ["甲狀腺超音波"]},
+    {"id": "breast_us", "name": "乳房超音波", "cat": "超音波", "gender": "F", "popular": true, "synonyms": ["乳房超音波"]},
+    {"id": "mammo", "name": "乳房攝影", "cat": "影像", "gender": "F", "synonyms": ["乳房X光", "乳房攝影", "3D乳房攝影", "3D乳房斷層", "乳房斷層攝影"]},
+    {"id": "gyn_us", "name": "婦科超音波", "cat": "超音波", "gender": "F", "synonyms": ["婦科超音波", "骨盆腔超音波", "陰道超音波"]},
+    {"id": "pap", "name": "子宮頸抹片／HPV", "cat": "婦科", "gender": "F", "synonyms": ["子宮頸抹片", "抹片", "HPV", "人類乳突病毒"]},
+    {"id": "prostate_us", "name": "攝護腺超音波", "cat": "超音波", "gender": "M", "synonyms": ["攝護腺超音波", "前列腺超音波"]},
+    {"id": "bmd", "name": "骨密度", "cat": "影像", "popular": true, "synonyms": ["骨密度", "骨質密度", "DXA", "骨質疏鬆"]},
+    {"id": "carotid_us", "name": "頸動脈超音波", "cat": "超音波", "synonyms": ["頸動脈超音波"]},
+    {"id": "echo", "name": "心臟超音波", "cat": "超音波", "synonyms": ["心臟超音波"]}
+  ],
+  "needs": {
+    "腸胃": {"required": ["egd", "colonoscopy"], "note": "Proposal 第 0 階段門檻：胃鏡＋大腸鏡為必要"}
+  }
+}

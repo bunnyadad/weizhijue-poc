@@ -1,0 +1,244 @@
+{
+  "note": "種子資料來自 Proposal v0.2 官網抽樣（2026-09-28）。items 只記官網明確看到的；inferred 為依方案名稱推定、尚未逐項確認；未列出者一律視為「未確認」。normalize_minutes 為人工標準化耗時，待逐筆記錄。",
+  "institutions": [
+    {
+      "id": "ntuh",
+      "name": "臺大健康管理中心",
+      "city": "台北",
+      "source_url": "https://hmc.ntuh.gov.tw/examination-items-and-pricing",
+      "source_format": "html_table",
+      "booking": {
+        "method": "線上系統（需登入）",
+        "reply_days": 0,
+        "calendar": "公開名額日曆（到日）"
+      }
+    },
+    {
+      "id": "lianan",
+      "name": "聯安診所",
+      "city": "台北",
+      "source_url": "https://www.lianan.com.tw/health/personal/package",
+      "source_format": "js_render",
+      "booking": {
+        "method": "表單",
+        "reply_days": 2,
+        "calendar": null
+      },
+      "notes": "2026-09-28 實測：方案頁為 JS 渲染，直接抓取只拿到外殼、沒有價格，需 headless browser"
+    },
+    {
+      "id": "mj",
+      "name": "美兆（台北）",
+      "city": "台北",
+      "source_url": "https://www.mjhealth.com/",
+      "source_format": "json_api",
+      "booking": {
+        "method": "表單",
+        "reply_days": 3,
+        "calendar": null
+      },
+      "notes": "官網資料有 updatedAt，可作變動偵測依據；2026-09-28 本 PoC 環境連線被重置，需在一般網路重測"
+    },
+    {
+      "id": "skh",
+      "name": "新光醫院",
+      "city": "台北",
+      "source_url": "https://www.skh.org.tw/",
+      "source_format": "unknown",
+      "booking": {
+        "method": "表單／傳真／電話",
+        "reply_days": null,
+        "calendar": null
+      },
+      "notes": "方案頁網址待補；2026-09-28 本 PoC 環境連線被重置，需在一般網路重測"
+    },
+    {
+      "id": "tpech",
+      "name": "北市聯醫",
+      "city": "台北",
+      "source_url": "https://tpech.gov.taipei/cp.aspx?n=5001A86B6DA37F16",
+      "source_format": "pdf",
+      "booking": {
+        "method": "電話 (02)2555-3000",
+        "reply_days": null,
+        "calendar": null
+      },
+      "notes": "公告 2026-10-01 起調整專案價；明細 PDF 為 2023 版；非健保身分 1.3 倍計價；2026-09-28 實測：總覽頁無價格，需進子頁或 PDF"
+    }
+  ],
+  "plans": [
+    {
+      "id": "ntuh-base-m",
+      "inst": "ntuh",
+      "name": "基礎標準套裝（男）",
+      "kind": "base",
+      "gender": "M",
+      "price": 23000,
+      "items": {
+        "ldct": "yes"
+      },
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null
+    },
+    {
+      "id": "ntuh-base-f",
+      "inst": "ntuh",
+      "name": "基礎標準套裝（女）",
+      "kind": "base",
+      "gender": "F",
+      "price": 25000,
+      "items": {
+        "ldct": "yes"
+      },
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null
+    },
+    {
+      "id": "ntuh-gi",
+      "inst": "ntuh",
+      "name": "胃腸鏡套裝（加選）",
+      "kind": "addon",
+      "gender": "all",
+      "price": 13700,
+      "items": {
+        "egd": "yes",
+        "colonoscopy": "yes",
+        "sedation": "yes"
+      },
+      "extra_fees": [
+        "內視鏡耗材另計"
+      ],
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null
+    },
+    {
+      "id": "lianan-adv-b-gi",
+      "inst": "lianan",
+      "name": "進階B-腸胃",
+      "kind": "fixed",
+      "gender": "all",
+      "price": 39600,
+      "items": {},
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ],
+      "choices": [
+        [
+          "breast_us",
+          "mammo"
+        ]
+      ],
+      "extra_fees": [
+        "報告翻譯等另計"
+      ],
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null
+    },
+    {
+      "id": "mj-gi",
+      "inst": "mj",
+      "name": "腸胃健康",
+      "kind": "fixed",
+      "gender": "all",
+      "price": 28900,
+      "items": {
+        "hp": "yes",
+        "pepsinogen": "yes",
+        "ca199": "no",
+        "psa": "no",
+        "ca125": "no"
+      },
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ],
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null
+    },
+    {
+      "id": "skh-fine-m",
+      "inst": "skh",
+      "name": "精緻健檢",
+      "kind": "fixed",
+      "gender": "M",
+      "price": 27800,
+      "items": {
+        "cxr": "yes",
+        "fobt": "no"
+      },
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ],
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null
+    },
+    {
+      "id": "skh-fine-m-ldct",
+      "inst": "skh",
+      "name": "精緻健檢＋LDCT",
+      "kind": "fixed",
+      "gender": "M",
+      "price": 32000,
+      "items": {
+        "ldct": "yes",
+        "fobt": "no"
+      },
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ],
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null
+    },
+    {
+      "id": "skh-women",
+      "inst": "skh",
+      "name": "婦女健檢",
+      "kind": "fixed",
+      "gender": "F",
+      "price": 32600,
+      "items": {
+        "cxr": "yes",
+        "fobt": "no"
+      },
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ],
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null
+    },
+    {
+      "id": "skh-women-ldct",
+      "inst": "skh",
+      "name": "婦女健檢＋LDCT",
+      "kind": "fixed",
+      "gender": "F",
+      "price": 36800,
+      "items": {
+        "ldct": "yes",
+        "fobt": "no"
+      },
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ],
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null
+    },
+    {
+      "id": "tpech-gi",
+      "inst": "tpech",
+      "name": "腸道健康檢查方案",
+      "kind": "fixed",
+      "gender": "all",
+      "price": null,
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "notes": "網頁未公開價格，2026-10-01 起調價"
+    }
+  ]
+}
