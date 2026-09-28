@@ -14,6 +14,10 @@ python -m wzj search "台北 女 胃鏡大腸鏡 乳房超音波和乳房攝影�
 # Go / No-go 指標
 python -m wzj report
 
+# 探測雙北 26 家候選機構能否自動取得資料（建議在台灣主機跑）
+python -m wzj probe
+python -m wzj probe ntuh skh --no-browser   # 只測指定機構、不用瀏覽器
+
 # 變動偵測（每週跑，滿 14 天自動判定）
 python -m wzj watch
 
@@ -44,11 +48,13 @@ open web/index.html        # 直接用瀏覽器開，不需要伺服器
 | 路徑 | 內容 |
 |---|---|
 | `data/taxonomy.json` | 標準項目 v0（37 項），含同義詞、性別限定、熱門標記、取代關係 |
-| `data/plans.json` | 5 家機構、10 筆方案（官網抽樣，2026-09-28） |
-| `data/queries.txt` | 10 個需求句 |
+| `data/plans.json` | 10 家機構、28 筆腸胃相關方案（2026-09-28） |
+| `data/sources.json` | 雙北 26 家候選機構與來源分類（A／B1／B2／C） |
+| `data/queries.txt` | 需求句範例 |
 | `wzj/parser.py` | 一句話 → 地區／預算／性別／必要項目（規則式，可換 LLM） |
 | `wzj/match.py` | 方案組合（固定套裝、基礎＋加選）、二選一、取代、另計費用、排序 |
 | `wzj/extract.py` | LLM 抽取介面（未接模型）＋逐欄評分 |
+| `wzj/probe.py`、`scripts/render.js` | 來源探測：HTTP → headless 瀏覽器，判斷可否自動化 |
 | `wzj/watch.py` | 抓取、正規化、價格指紋比對、變動紀錄 |
 | `wzj/report.py` | 第 0 階段四個指標，數據不足一律標「未測」 |
 | `web/` | 單檔網頁版（模板＋build 腳本） |
@@ -72,4 +78,4 @@ class ClaudeExtractor:
 
 評分只比對人工已確認的欄位，推定與未確認的不計分。
 
-詳細結論見 [FEASIBILITY.md](FEASIBILITY.md)。
+詳細結論見 [FEASIBILITY.md](FEASIBILITY.md)；雙北來源評估與成本見 [SOURCING.md](SOURCING.md)。

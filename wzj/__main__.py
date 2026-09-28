@@ -69,6 +69,9 @@ def main(argv=None):
     s.add_argument("--today", help="模擬日期 YYYY-MM-DD")
     sub.add_parser("report", help="Go / No-go 指標")
     sub.add_parser("watch", help="抓取來源並偵測變動")
+    pr = sub.add_parser("probe", help="探測雙北候選機構能否自動取得方案資料")
+    pr.add_argument("ids", nargs="*", help="只測指定機構 id")
+    pr.add_argument("--no-browser", action="store_true", help="不用 headless 瀏覽器")
     e = sub.add_parser("eval", help="LLM 抽取錯誤率")
     e.add_argument("--from", dest="src", required=True, help="LLM 抽取結果 JSON")
     t = sub.add_parser("log-time", help="記錄人工標準化耗時")
@@ -100,6 +103,14 @@ def main(argv=None):
             if r["ok"] and not r["prices"]:
                 st += "；⚠ 頁面上抓不到任何價格（可能要 JS 渲染或價格在 PDF），此來源無法自動盯價"
             print(f"{r['inst']}：{st}")
+    elif a.cmd == "probe":
+        from . import probe
+        for r in probe.run(a.ids or None, not a.no_browser):
+            h = r.get("browser") or r.get("http") or {}
+            err = r.get("http_error") or r.get("browser_error") or ""
+            print(f"{r['name']}：{r['method']}｜價格 {h.get('prices', '-')}｜腸胃字樣 {h.get('gi', '-')}"
+                  + (f"｜{err[:80]}" if err and r["method"] in ("error", "blocked") else ""))
+        print(f"結果存於 {probe.OUT / 'result.json'}；依結果更新 data/sources.json 的 category")
     elif a.cmd == "eval":
         res = extract.evaluate(cat, extract.FileExtractor(Path(a.src)))
         report.EVAL.write_text(json.dumps(res, ensure_ascii=False, indent=2), "utf-8")

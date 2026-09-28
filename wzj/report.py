@@ -5,7 +5,6 @@ from pathlib import Path
 from . import watch
 from .data import DATA, Catalog
 
-AUTO_FORMATS = {"json_api", "graphql", "html_table"}
 EVAL = DATA / "eval_result.json"
 
 
@@ -39,14 +38,16 @@ def metrics(cat: Catalog) -> list[dict]:
         rows.append(dict(name="兩週變動率", value=f"觀察中（已 {w['days']} 天，{w['runs']} 次抓取）", verdict="—",
                          todo="每週跑 `python -m wzj watch`，滿 14 天後自動判定"))
 
-    total = len(cat.institutions)
-    auto = [i for i in cat.institutions.values() if i.source_format in AUTO_FORMATS]
-    unknown = [i for i in cat.institutions.values() if i.source_format == "unknown"]
-    ratio = len(auto) / total
+    src = json.loads((DATA / "sources.json").read_text("utf-8"))["sources"]
+    by = {k: sum(1 for x in src if x.get("category") == k) for k in ("A", "B1", "B2", "C")}
+    n = len(src)
+    low, high = by["A"] / n, (by["A"] + by["B1"] + by["B2"]) / n
     rows.append(dict(
         name="可自動化來源比例",
-        value=f"{len(auto)}/{total}（{ratio:.0%}）" + (f"，{len(unknown)} 家格式未確認" if unknown else ""),
-        verdict="繼續" if ratio >= 0.5 else "重新思考",
+        value=f"雙北 {n} 家候選：A {by['A']}、B1 {by['B1']}、B2 {by['B2']}、C {by['C']}；"
+              f"只算 A 為 {low:.0%}，B2 在台灣 IP 可抓時最高 {high:.0%}",
+        verdict="繼續" if low >= 0.5 else "待台灣 IP 重測" if high >= 0.5 else "重新思考",
+        todo="在台灣主機跑 `python -m wzj probe` 重新分類 B2" if by["B2"] else None,
     ))
 
     plans = cat.plans

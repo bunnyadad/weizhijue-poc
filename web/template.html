@@ -117,6 +117,14 @@ h2{font-size:17px;margin:26px 0 10px}
 .verdict{font-size:12px;font-weight:500;border-radius:999px;padding:2px 10px;align-self:start}
 .verdict.go{background:var(--ok-soft);color:var(--ok)} .verdict.rethink{background:var(--bad-soft);color:var(--bad)} .verdict.na{background:var(--unk-soft);color:var(--unk)}
 p.lead{color:var(--muted);max-width:65ch}
+.catgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.cat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:2px}
+.cat b{font:500 24px/1.2 var(--mono)}
+.cat span{font-size:13px;color:var(--muted)}
+.badge{display:inline-block;min-width:2.4em;text-align:center;border-radius:6px;padding:0 6px;font:500 12px/1.6 var(--mono)}
+.badge.A{background:var(--ok-soft);color:var(--ok)} .badge.B1{background:var(--accent-soft);color:var(--accent)}
+.badge.B2{background:var(--warn-soft);color:var(--warn)} .badge.C{background:var(--bad-soft);color:var(--bad)}
+.have{color:var(--ok);font-size:12px}
 
 @media (max-width:560px){
   .top{grid-template-columns:auto 1fr}
@@ -130,10 +138,11 @@ p.lead{color:var(--muted);max-width:65ch}
 
 <div class="wrap">
   <header>
-    <div class="brand"><h1>微直覺</h1><span>PoC・台北腸胃健檢・官網抽樣 2026-09-28</span></div>
+    <div class="brand"><h1>微直覺</h1><span>PoC・雙北腸胃健檢・官網資料 2026-09-28</span></div>
     <nav role="tablist">
       <button role="tab" id="tab-search" aria-selected="true" data-tab="search">搜尋</button>
       <button role="tab" id="tab-data" aria-selected="false" data-tab="data">資料</button>
+      <button role="tab" id="tab-sources" aria-selected="false" data-tab="sources">來源盤點</button>
       <button role="tab" id="tab-metrics" aria-selected="false" data-tab="metrics">驗證指標</button>
     </nav>
   </header>
@@ -167,6 +176,12 @@ p.lead{color:var(--muted);max-width:65ch}
     <div class="tablewrap"><table id="t-insts"></table></div>
     <h2>標準項目 v0</h2>
     <div class="tablewrap"><table id="t-items"></table></div>
+  </section>
+
+  <section id="pane-sources" hidden>
+    <p class="lead">台北市與新北市提供自費健檢（含胃腸鏡）的候選機構，2026-09-28 逐家實測能否從官網取得方案資料。</p>
+    <div class="catgrid" id="catgrid"></div>
+    <div class="tablewrap"><table id="t-sources"></table></div>
   </section>
 
   <section id="pane-metrics" hidden>
@@ -379,7 +394,6 @@ $("need").addEventListener("change", e => { if (e.target.id === "f-add" && e.tar
 
 // ---- 資料與指標
 const FMT = {html_table: "HTML 表格", json_api: "JSON API", graphql: "GraphQL", js_render: "JS 渲染", pdf: "PDF／子頁", unknown: "未確認"};
-const AUTO = new Set(["html_table", "json_api", "graphql"]);
 const KIND = {fixed: "固定套裝", base: "基礎", addon: "加選"};
 const GEN = {M: "男", F: "女", all: "不限"};
 $("t-plans").innerHTML = `<tr><th>機構</th><th>方案</th><th>類型</th><th>性別</th><th>價格</th><th>已確認</th><th>推定</th><th>二選一</th><th>另計</th></tr>` +
@@ -393,24 +407,31 @@ $("t-insts").innerHTML = `<tr><th>機構</th><th>來源格式</th><th>預約方�
 $("t-items").innerHTML = `<tr><th>分類</th><th>項目</th><th>熱門</th><th>限定</th><th>各家寫法（同義詞）</th></tr>` +
   Object.values(ITEMS).map(i => `<tr><td>${esc(i.cat)}</td><td>${esc(i.name)}${i.replaces.length ? `<br><small>可取代${i.replaces.map(name).join("、")}</small>` : ""}</td><td>${i.popular ? "★" : ""}</td><td>${i.gender ? GEN[i.gender] : ""}</td><td>${esc(i.synonyms.join("、"))}</td></tr>`).join("");
 
-const insts = Object.values(INSTS), auto = insts.filter(i => AUTO.has(i.source_format)).length;
+const SRC = D.sources.sources, CATS = D.sources.categories;
+const byCat = k => SRC.filter(x => x.category === k).length;
+const lowR = byCat("A") / SRC.length, highR = (byCat("A") + byCat("B1") + byCat("B2")) / SRC.length;
+const HAVE = new Set(Object.keys(INSTS));
+$("catgrid").innerHTML = Object.entries(CATS).map(([k, v]) => `<div class="cat"><span><span class="badge ${k}">${k}</span></span><b>${byCat(k)} 家</b><span>${esc(v)}</span></div>`).join("");
+$("t-sources").innerHTML = `<tr><th>分類</th><th>機構</th><th>地區</th><th>實測狀況</th><th>改善方式</th></tr>` +
+  ["A", "B1", "B2", "C"].flatMap(k => SRC.filter(x => x.category === k)).map(x =>
+    `<tr><td><span class="badge ${x.category}">${x.category}</span></td><td><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name)}</a>${HAVE.has(x.id) ? '<br><span class="have">已建檔</span>' : ""}</td><td>${esc(x.city)}</td><td>${esc(x.finding)}</td><td>${esc(x.fix)}</td></tr>`).join("");
 const conf = PLANS.reduce((s, p) => s + Object.keys(p.items).length, 0), inf = PLANS.reduce((s, p) => s + p.inferred.length, 0);
 const METRICS = [
   ["通用 AI 錯誤率", "門檻：價格或項目錯誤 ≥ 30% 才繼續", "未測。用 <code>python -m wzj bench</code> 產生 10 句對照表，填入 ChatGPT／Perplexity 回答後評分。", "na", "未測"],
   ["每筆人工標準化時間", "門檻：≤ 10 分鐘", "未測。逐筆補齊項目清單時用 <code>python -m wzj log-time</code> 記錄。", "na", "未測"],
   ["兩週變動率", "門檻：每週維護 1–2 小時可應付", "觀察中。需在一般網路每週跑 <code>python -m wzj watch</code>；已改用價格指紋比對，避免全文 hash 誤報。", "na", "觀察中"],
-  ["可自動化來源比例", "門檻：≥ 50%", `${auto}/${insts.length}（${Math.round(auto / insts.length * 100)}%）。臺大 HTML 可直接抓價；聯安為 JS 渲染、北市聯醫價格在子頁或 PDF；美兆、新光在 PoC 環境連線失敗，待一般網路重測。`, auto / insts.length >= .5 ? "go" : "rethink", auto / insts.length >= .5 ? "繼續" : "偏負面"],
-  ["資料完整度（參考）", "", `${PLANS.length} 筆方案；已確認欄位 ${conf}、推定 ${inf}；價格未公開 ${PLANS.filter(p => p.price == null).length} 筆。`, "na", "參考"],
+  ["可自動化來源比例", "門檻：≥ 50%", `雙北 ${SRC.length} 家候選：A ${byCat("A")}、B1 ${byCat("B1")}、B2 ${byCat("B2")}、C ${byCat("C")}。只算 A 為 ${Math.round(lowR * 100)}%；B2 若在台灣 IP 可抓，最高 ${Math.round(highR * 100)}%。下一步：在台灣主機跑 <code>python -m wzj probe</code>。`, lowR >= .5 ? "go" : highR >= .5 ? "na" : "rethink", lowR >= .5 ? "繼續" : highR >= .5 ? "待重測" : "偏負面"],
+  ["資料完整度（參考）", "", `${Object.keys(INSTS).length} 家、${PLANS.length} 筆方案；已確認欄位 ${conf}、推定 ${inf}；價格未公開 ${PLANS.filter(p => p.price == null).length} 筆。`, "na", "參考"],
 ];
 $("metrics").innerHTML = METRICS.map(([t, th, v, c, label]) => `<div class="metric"><h3>${t}${th ? `<br><small style="font-weight:400;color:var(--faint)">${th}</small>` : ""}</h3><span class="verdict ${c}">${label}</span><div class="v">${v}</div></div>`).join("");
 
 // ---- 分頁
 function show(tab) {
   for (const b of document.querySelectorAll("nav button")) b.setAttribute("aria-selected", b.dataset.tab === tab);
-  for (const t of ["search", "data", "metrics"]) $("pane-" + t).hidden = t !== tab;
+  for (const t of ["search", "data", "sources", "metrics"]) $("pane-" + t).hidden = t !== tab;
 }
 document.querySelector("nav").addEventListener("click", e => { if (e.target.dataset.tab) show(e.target.dataset.tab); });
-if (["data", "metrics"].includes(location.hash.slice(1))) show(location.hash.slice(1));
+if (["data", "sources", "metrics"].includes(location.hash.slice(1))) show(location.hash.slice(1));
 
 submit(QUERIES[0]);
 </script>

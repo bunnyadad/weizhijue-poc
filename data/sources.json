@@ -1,0 +1,271 @@
+{
+  "note": "台北市＋新北市提供自費健檢（含胃腸鏡）的候選機構與方案入口頁，2026-09-28 蒐集。tier：center=醫學中心／大型醫院、chain=健檢連鎖或專門診所、regional=區域醫院。",
+  "sources": [
+    {
+      "id": "ntuh",
+      "name": "臺大健康管理中心",
+      "city": "台北",
+      "tier": "center",
+      "url": "https://hmc.ntuh.gov.tw/examination-items-and-pricing",
+      "category": "A",
+      "finding": "HTML 表格直接含價格（本環境第一輪成功，之後海外 IP 連線被重置）",
+      "fix": "放台灣主機定期抓"
+    },
+    {
+      "id": "vghtpe",
+      "name": "臺北榮總健康管理中心",
+      "city": "台北",
+      "tier": "center",
+      "url": "https://phys.vghtpe.gov.tw/",
+      "category": "B2",
+      "finding": "HTTP 403",
+      "fix": "台灣 IP 重測；仍擋則 headless"
+    },
+    {
+      "id": "tsgh",
+      "name": "三軍總醫院健康管理中心",
+      "city": "台北",
+      "tier": "center",
+      "url": "https://wwwv.tsgh.ndmctsgh.edu.tw/unit/10043/25865",
+      "category": "B2",
+      "finding": "Cloudflare 403（搜尋引擎可見方案價格：腸胃道組合 18,000–57,400）",
+      "fix": "台灣 IP＋headless；仍擋則人工每月核對"
+    },
+    {
+      "id": "mmh",
+      "name": "台北馬偕健康檢查中心",
+      "city": "台北",
+      "tier": "center",
+      "url": "https://wapps.mmh.org.tw/Health2015/Default.aspx",
+      "category": "B2",
+      "finding": "連線被重置",
+      "fix": "台灣 IP 重測"
+    },
+    {
+      "id": "cathay",
+      "name": "國泰健康管理",
+      "city": "台北",
+      "tier": "center",
+      "url": "https://www.cathay-hcm.com.tw/tw/front/service",
+      "category": "A",
+      "finding": "列表 HTML 含全部套檢價格；項目細節在各套檢子頁",
+      "fix": "列表＋子頁兩層爬取"
+    },
+    {
+      "id": "skh",
+      "name": "新光醫院健康檢查中心",
+      "city": "台北",
+      "tier": "center",
+      "url": "https://www.skh.org.tw/skh/8f12b7ac15.html",
+      "category": "B2",
+      "finding": "連線被重置；腸胃健檢方案總覽頁存在",
+      "fix": "台灣 IP 重測"
+    },
+    {
+      "id": "cgc",
+      "name": "長庚診所（台北）",
+      "city": "台北",
+      "tier": "center",
+      "url": "https://www1.cgmh.org.tw/branch/cgc/Navigator/Detail?CategoryId=4&Id=120",
+      "category": "B2",
+      "finding": "WAF 安全驗證攔截；官網寫可客製化、email 詢價",
+      "fix": "台灣 IP 重測；多半轉業務"
+    },
+    {
+      "id": "tmuh",
+      "name": "北醫附醫健康管理中心",
+      "city": "台北",
+      "tier": "center",
+      "url": "https://fvr.tmuh.org.tw/",
+      "category": "B1",
+      "finding": "子頁有價格（基礎 28,000／30,000、活力 36,000），檢查項目疑為圖片",
+      "fix": "子頁爬取＋圖片需人工或 OCR"
+    },
+    {
+      "id": "wanfang",
+      "name": "萬芳醫院健康管理中心",
+      "city": "台北",
+      "tier": "center",
+      "url": "https://wfhweb.wanfang.gov.tw/I000/index.htm",
+      "category": "B2",
+      "finding": "TLS 握手逾時",
+      "fix": "台灣 IP 重測"
+    },
+    {
+      "id": "chgh",
+      "name": "振興醫院健康管理中心",
+      "city": "台北",
+      "tier": "regional",
+      "url": "https://chhealth.com.tw/en/health-screening/screening-packages/2023-all-screening-packages/",
+      "category": "A",
+      "finding": "價格在 HTML；細項在 Google Drive PDF；網址標 2023",
+      "fix": "價格自動、細項 PDF 人工核對一次"
+    },
+    {
+      "id": "kfsyscc",
+      "name": "和信治癌中心醫院",
+      "city": "台北",
+      "tier": "regional",
+      "url": "https://www.kfsyscc.org/m/health_examination_price",
+      "category": "C",
+      "finding": "價目頁已 404",
+      "fix": "業務索取價目表"
+    },
+    {
+      "id": "tpech",
+      "name": "北市聯醫",
+      "city": "台北",
+      "tier": "regional",
+      "url": "https://tpech.gov.taipei/cp.aspx?n=5001A86B6DA37F16&s=A9A4ED242142D4CC",
+      "category": "C",
+      "finding": "2026-10-01 調價但新價未公布；明細 PDF 為 2023 版",
+      "fix": "業務索取新價目表"
+    },
+    {
+      "id": "taian",
+      "name": "臺安醫院凱悠健康管理中心",
+      "city": "台北",
+      "tier": "regional",
+      "url": "https://www.taian-careu.com.tw/plans",
+      "category": "A",
+      "finding": "方案列表 HTML 含價格",
+      "fix": "直接爬取＋子頁補項目"
+    },
+    {
+      "id": "lianan",
+      "name": "聯安診所",
+      "city": "台北",
+      "tier": "chain",
+      "url": "https://www.lianan.com.tw/health/personal/package",
+      "category": "B1",
+      "finding": "JS 渲染，一般抓取只拿到外殼",
+      "fix": "headless 瀏覽器（Playwright）"
+    },
+    {
+      "id": "mj",
+      "name": "美兆（台北）",
+      "city": "台北",
+      "tier": "chain",
+      "url": "https://www.majorhealth.ai/examination/examination-sets/all",
+      "category": "A",
+      "finding": "majorhealth.ai 套組列表 HTML 含價格",
+      "fix": "直接爬取"
+    },
+    {
+      "id": "eonway",
+      "name": "永越健康管理中心",
+      "city": "台北",
+      "tier": "chain",
+      "url": "https://www.eonway.com/%E5%81%A5%E6%AA%A2%E9%A0%85%E7%9B%AE/%E8%85%B8%E8%83%83%E5%81%A5%E6%AA%A2%E5%B0%88%E6%A1%88/",
+      "category": "B1",
+      "finding": "價格與明細在 PDF（2025-03 版）",
+      "fix": "PDF 轉文字＋LLM 抽取＋人工核對"
+    },
+    {
+      "id": "anfa",
+      "name": "安法診所",
+      "city": "台北",
+      "tier": "chain",
+      "url": "https://www.anfa.com.tw/",
+      "category": "C",
+      "finding": "官網未公開價格",
+      "fix": "業務洽詢"
+    },
+    {
+      "id": "femh",
+      "name": "亞東醫院健康管理中心",
+      "city": "新北",
+      "tier": "center",
+      "url": "https://depart.femh.org.tw/hmc/",
+      "category": "B2",
+      "finding": "連線中斷；組套在 depart.femh.org.tw/HMC",
+      "fix": "台灣 IP 重測"
+    },
+    {
+      "id": "shh",
+      "name": "雙和醫院健康管理中心",
+      "city": "新北",
+      "tier": "center",
+      "url": "https://shh.tmu.edu.tw/page/IntroFeaturse.aspx?IntroType=S&deptCode=011",
+      "category": "C",
+      "finding": "方案做成外部電子書，無可抓取的價格表",
+      "fix": "業務索取 PDF／價目表"
+    },
+    {
+      "id": "ntch",
+      "name": "新北市立聯合醫院",
+      "city": "新北",
+      "tier": "regional",
+      "url": "https://www.ntch.ntpc.gov.tw/home.jsp?id=5358ac88930ab532",
+      "category": "A",
+      "finding": "HTML 表格含價格與項目勾選，結構最完整",
+      "fix": "直接爬取"
+    },
+    {
+      "id": "cth",
+      "name": "耕莘醫院（新店）",
+      "city": "新北",
+      "tier": "regional",
+      "url": "https://www.cth.org.tw/?aid=61&pid=31&iid=4",
+      "category": "B1",
+      "finding": "總覽頁無價格，需進子頁",
+      "fix": "子頁爬取"
+    },
+    {
+      "id": "tzuchi",
+      "name": "台北慈濟醫院（新店）",
+      "city": "新北",
+      "tier": "regional",
+      "url": "https://taipei.tzuchi.com.tw/category/%E9%A0%90%E9%98%B2%E9%86%AB%E5%AD%B8%E4%B8%AD%E5%BF%83/%E9%A0%90%E9%98%B2%E9%86%AB%E5%AD%B8%E4%B8%AD%E5%BF%83%E5%81%A5%E6%AA%A2%E6%96%B9%E6%A1%88/",
+      "category": "C",
+      "finding": "方案為下載檔，最新為 2022 年",
+      "fix": "業務確認現行方案與價格"
+    },
+    {
+      "id": "cgh_sj",
+      "name": "汐止國泰",
+      "city": "新北",
+      "tier": "regional",
+      "url": "https://sijhih.cgh.org.tw/rwd102/store/F1/114%E5%B9%B4%E5%81%A5%E6%AA%A2%E9%A0%85%E7%9B%AE.pdf",
+      "category": "B2",
+      "finding": "PDF（114 年健檢項目），連線被重置",
+      "fix": "台灣 IP＋PDF 解析"
+    },
+    {
+      "id": "mmh_ts",
+      "name": "淡水馬偕健檢中心",
+      "city": "新北",
+      "tier": "center",
+      "url": "https://www.mmh.org.tw/healthcenteritemlst.php",
+      "category": "B1",
+      "finding": "列表頁無價格，PDF 多為表單與篩檢單張",
+      "fix": "找方案子頁；可能轉業務"
+    },
+    {
+      "id": "fjuh",
+      "name": "輔大醫院",
+      "city": "新北",
+      "tier": "regional",
+      "url": "https://webdept.fjuh.fju.edu.tw/FjuhDep/cmltc/an-introduction/",
+      "category": "B2",
+      "finding": "網站憑證鏈不完整（缺中繼憑證）",
+      "fix": "補中繼憑證後抓取"
+    },
+    {
+      "id": "eck",
+      "name": "恩主公醫院健康管理中心",
+      "city": "新北",
+      "tier": "regional",
+      "url": "https://hmc.eck.org.tw/package",
+      "category": "B2",
+      "finding": "HTTP 522（來源站逾時）；另有 PDF 價目表",
+      "fix": "台灣 IP 重測＋PDF"
+    }
+  ],
+  "categories": {
+    "A": "網路可查，一般抓取即可",
+    "B1": "網路可查，需換抓法（JS／PDF／子頁）",
+    "B2": "網路可查，但海外 IP 被擋或連不上，需台灣主機重測",
+    "C": "網路資料不齊或過期，需業務介入"
+  }
+}

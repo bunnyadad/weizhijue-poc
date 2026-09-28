@@ -1,5 +1,5 @@
 {
-  "note": "種子資料來自 Proposal v0.2 官網抽樣（2026-09-28）。items 只記官網明確看到的；inferred 為依方案名稱推定、尚未逐項確認；未列出者一律視為「未確認」。normalize_minutes 為人工標準化耗時，待逐筆記錄。",
+  "note": "種子資料：2026-09-28 官網抽樣與爬取。items 只記官網明確看到的；inferred 為依方案名稱推定（如「腸胃鏡」推定含胃鏡＋大腸鏡）；未列出者視為未確認。",
   "institutions": [
     {
       "id": "ntuh",
@@ -30,27 +30,27 @@
       "id": "mj",
       "name": "美兆（台北）",
       "city": "台北",
-      "source_url": "https://www.mjhealth.com/",
-      "source_format": "json_api",
+      "source_url": "https://www.majorhealth.ai/examination/examination-sets/all",
+      "source_format": "html_table",
       "booking": {
         "method": "表單",
         "reply_days": 3,
         "calendar": null
       },
-      "notes": "官網資料有 updatedAt，可作變動偵測依據；2026-09-28 本 PoC 環境連線被重置，需在一般網路重測"
+      "notes": "官網已改為 majorhealth.ai；套組列表 HTML 直接含價格"
     },
     {
       "id": "skh",
       "name": "新光醫院",
       "city": "台北",
-      "source_url": "https://www.skh.org.tw/",
+      "source_url": "https://www.skh.org.tw/skh/8f12b7ac15.html",
       "source_format": "unknown",
       "booking": {
         "method": "表單／傳真／電話",
         "reply_days": null,
         "calendar": null
       },
-      "notes": "方案頁網址待補；2026-09-28 本 PoC 環境連線被重置，需在一般網路重測"
+      "notes": "腸胃健檢方案總覽頁已找到；PoC 環境（海外 IP）連線被重置，需台灣 IP 重測"
     },
     {
       "id": "tpech",
@@ -63,7 +63,71 @@
         "reply_days": null,
         "calendar": null
       },
-      "notes": "公告 2026-10-01 起調整專案價；明細 PDF 為 2023 版；非健保身分 1.3 倍計價；2026-09-28 實測：總覽頁無價格，需進子頁或 PDF"
+      "notes": "腸保健康專案含胃鏡＋全大腸鏡＋無痛麻醉；公告 2026-10-01 起調價，網頁未列新價；明細 PDF 為 2023 版"
+    },
+    {
+      "id": "cathay",
+      "name": "國泰健康管理（敦南／內湖）",
+      "city": "台北",
+      "source_url": "https://www.cathay-hcm.com.tw/tw/front/service",
+      "source_format": "html_table",
+      "booking": {
+        "method": "線上預約／客服 412-8006",
+        "reply_days": null,
+        "calendar": null
+      },
+      "notes": "列表只有名稱與價格，項目細節需點進各套檢頁"
+    },
+    {
+      "id": "chgh",
+      "name": "振興醫院健康管理中心",
+      "city": "台北",
+      "source_url": "https://chhealth.com.tw/en/health-screening/screening-packages/2023-all-screening-packages/",
+      "source_format": "html_table",
+      "booking": {
+        "method": "電話／線上",
+        "reply_days": null,
+        "calendar": null
+      },
+      "notes": "價格在 HTML；方案細項放在 Google Drive PDF；網址標示 2023，需確認是否為現行價"
+    },
+    {
+      "id": "taian",
+      "name": "臺安醫院凱悠健康管理中心",
+      "city": "台北",
+      "source_url": "https://www.taian-careu.com.tw/plans",
+      "source_format": "html_table",
+      "booking": {
+        "method": "電話 (02)2740-0729／線上",
+        "reply_days": null,
+        "calendar": null
+      }
+    },
+    {
+      "id": "eonway",
+      "name": "永越健康管理中心",
+      "city": "台北",
+      "source_url": "https://www.eonway.com/%E5%81%A5%E6%AA%A2%E9%A0%85%E7%9B%AE/%E8%85%B8%E8%83%83%E5%81%A5%E6%AA%A2%E5%B0%88%E6%A1%88/",
+      "source_format": "pdf",
+      "booking": {
+        "method": "線上／電話 (02)2332-9888",
+        "reply_days": null,
+        "calendar": null
+      },
+      "notes": "價格與明細在 PDF（2025-03 版）"
+    },
+    {
+      "id": "ntch",
+      "name": "新北市立聯合醫院",
+      "city": "新北",
+      "source_url": "https://www.ntch.ntpc.gov.tw/home.jsp?id=5358ac88930ab532",
+      "source_format": "html_table",
+      "booking": {
+        "method": "電話",
+        "reply_days": null,
+        "calendar": null
+      },
+      "notes": "HTML 表格含價格與項目勾選；2024-02-01 起尊榮專案調為 20,000"
     }
   ],
   "plans": [
@@ -138,7 +202,7 @@
     {
       "id": "mj-gi",
       "inst": "mj",
-      "name": "腸胃健康",
+      "name": "腸胃健康－全麻AI無痛腸胃鏡",
       "kind": "fixed",
       "gender": "all",
       "price": 28900,
@@ -147,7 +211,8 @@
         "pepsinogen": "yes",
         "ca199": "no",
         "psa": "no",
-        "ca125": "no"
+        "ca125": "no",
+        "sedation": "yes"
       },
       "inferred": [
         "egd",
@@ -231,14 +296,321 @@
     {
       "id": "tpech-gi",
       "inst": "tpech",
-      "name": "腸道健康檢查方案",
+      "name": "腸保健康專案",
       "kind": "fixed",
       "gender": "all",
       "price": null,
-      "items": {},
+      "items": {
+        "egd": "yes",
+        "colonoscopy": "yes",
+        "sedation": "yes"
+      },
       "confirmed_at": "2026-09-28",
       "normalize_minutes": null,
       "notes": "網頁未公開價格，2026-10-01 起調價"
+    },
+    {
+      "kind": "fixed",
+      "gender": "all",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "cathay-gi-pm",
+      "inst": "cathay",
+      "name": "下午腸胃鏡套檢",
+      "price": 15000,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ],
+      "notes": "敦南、內湖同價"
+    },
+    {
+      "kind": "fixed",
+      "gender": "all",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "cathay-gi-pm-blood",
+      "inst": "cathay",
+      "name": "下午腸胃鏡套檢（含抽血項目）",
+      "price": 16000,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ],
+      "notes": "敦南、內湖同價"
+    },
+    {
+      "kind": "fixed",
+      "gender": "all",
+      "items": {
+        "sedation": "yes"
+      },
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "mj-plus-cv",
+      "inst": "mj",
+      "name": "心血管健康PLUS+（含全麻AI無痛腸胃鏡）",
+      "price": 41900,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "M",
+      "items": {
+        "sedation": "yes"
+      },
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "mj-plus-m",
+      "inst": "mj",
+      "name": "卓越紳士PLUS+（含全麻AI無痛腸胃鏡）",
+      "price": 44900,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "F",
+      "items": {
+        "sedation": "yes"
+      },
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "mj-plus-f",
+      "inst": "mj",
+      "name": "悅齡女力PLUS+（含全麻AI無痛腸胃鏡）",
+      "price": 45900,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "all",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "chgh-value-gi",
+      "inst": "chgh",
+      "name": "Value GI 健檢",
+      "price": 23000
+    },
+    {
+      "kind": "fixed",
+      "gender": "M",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "chgh-gi-basic-m",
+      "inst": "chgh",
+      "name": "基礎胃腸內視鏡健檢（男）",
+      "price": 26800,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "F",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "chgh-gi-basic-f",
+      "inst": "chgh",
+      "name": "基礎胃腸內視鏡健檢（女）",
+      "price": 28800,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "M",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "chgh-gi-cardiac-m",
+      "inst": "chgh",
+      "name": "心臟＋胃腸內視鏡健檢（男）",
+      "price": 38800,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "F",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "chgh-gi-cardiac-f",
+      "inst": "chgh",
+      "name": "心臟＋胃腸內視鏡健檢（女）",
+      "price": 40800,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "M",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "chgh-gi-mri-m",
+      "inst": "chgh",
+      "name": "MRI＋胃腸內視鏡健檢（男）",
+      "price": 78000,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "F",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "chgh-gi-mri-f",
+      "inst": "chgh",
+      "name": "MRI＋胃腸內視鏡健檢（女）",
+      "price": 88000,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "M",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "chgh-gi-multi-m",
+      "inst": "chgh",
+      "name": "多重點胃腸內視鏡健檢（男）",
+      "price": 85000,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "F",
+      "items": {},
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "chgh-gi-multi-f",
+      "inst": "chgh",
+      "name": "多重點胃腸內視鏡健檢（女）",
+      "price": 87000,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "all",
+      "items": {
+        "sedation": "yes"
+      },
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "taian-gi",
+      "inst": "taian",
+      "name": "舒眠腸胃鏡檢查",
+      "price": 9300,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "all",
+      "items": {
+        "sedation": "yes",
+        "abd_us": "yes",
+        "echo": "yes"
+      },
+      "confirmed_at": "2025-03-14",
+      "normalize_minutes": null,
+      "id": "eonway-gi",
+      "inst": "eonway",
+      "name": "腸胃健檢專案",
+      "price": 36000,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ],
+      "notes": "日期取自官方 PDF 檔名"
+    },
+    {
+      "kind": "fixed",
+      "gender": "all",
+      "items": {
+        "sedation": "yes",
+        "ldct": "yes",
+        "fobt": "yes",
+        "ecg": "yes",
+        "urine": "yes",
+        "liver": "yes",
+        "kidney": "yes",
+        "lipid": "yes",
+        "glucose": "yes",
+        "uric": "yes"
+      },
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "ntch-gi",
+      "inst": "ntch",
+      "name": "幸福主題 B－腸胃專案",
+      "price": 20000,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
+    },
+    {
+      "kind": "fixed",
+      "gender": "all",
+      "items": {
+        "sedation": "no",
+        "fobt": "yes",
+        "ecg": "yes",
+        "urine": "yes",
+        "liver": "yes",
+        "kidney": "yes",
+        "lipid": "yes",
+        "glucose": "yes",
+        "uric": "yes",
+        "thyroid_fn": "yes"
+      },
+      "confirmed_at": "2026-09-28",
+      "normalize_minutes": null,
+      "id": "ntch-elite",
+      "inst": "ntch",
+      "name": "健康菁英專案（有感腸胃鏡）",
+      "price": 8000,
+      "inferred": [
+        "egd",
+        "colonoscopy"
+      ]
     }
   ]
 }

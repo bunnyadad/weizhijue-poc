@@ -83,8 +83,18 @@ class MatchTest(unittest.TestCase):
 
     def test_cheapest(self):
         res, _, _ = self.run_q("台北 男 腸胃 最便宜的")
-        self.assertEqual(res[0].inst_id, "skh")
-        self.assertEqual(res[0].price, 27800)
+        self.assertEqual(res[0].inst_id, "taian")
+        self.assertEqual(res[0].price, 9300)
+        self.assertEqual([r.price for r in res], sorted(r.price for r in res))
+
+    def test_new_taipei(self):
+        res, more, _ = self.run_q("新北 無痛 胃鏡 大腸鏡")
+        self.assertEqual({r.inst_id for r in res + more}, {"ntch"})
+        self.assertEqual(res[0].parts[0].id, "ntch-gi")
+
+    def test_explicit_no_sedation(self):
+        _, _, dropped = self.run_q("新北 無痛 胃鏡 大腸鏡")
+        self.assertIn("ntch-elite", {r.parts[0].id for r in dropped})
 
     def test_stale(self):
         res, _, _ = search(parse("台北 胃鏡", CAT), CAT, date(2026, 12, 1))
@@ -95,7 +105,7 @@ class ExtractTest(unittest.TestCase):
     def test_score(self):
         # 模擬的 LLM 輸出，只用來驗證評分邏輯
         fake = {
-            "mj-gi": {"price": 28900, "items": {"hp": "yes", "pepsinogen": "yes", "ca199": "yes", "psa": "no", "ca125": "no"}},
+            "mj-gi": {"price": 28900, "items": {"hp": "yes", "pepsinogen": "yes", "ca199": "yes", "psa": "no", "ca125": "no", "sedation": "yes"}},
             "ntuh-gi": {"price": 13700, "items": {"egd": "yes", "colonoscopy": "yes", "sedation": "yes"}},
             "lianan-adv-b-gi": {"price": 38600, "items": {"breast_us": "choice", "mammo": "no"}},
         }

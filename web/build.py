@@ -9,6 +9,7 @@ def build() -> Path:
     data = {
         "taxonomy": json.loads((ROOT / "data/taxonomy.json").read_text("utf-8")),
         "plans": json.loads((ROOT / "data/plans.json").read_text("utf-8")),
+        "sources": json.loads((ROOT / "data/sources.json").read_text("utf-8")),
     }
     queries = [l.strip() for l in (ROOT / "data/queries.txt").read_text("utf-8").splitlines() if l.strip()]
     html = (ROOT / "web/template.html").read_text("utf-8")

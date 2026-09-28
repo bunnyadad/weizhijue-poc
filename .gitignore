@@ -3,3 +3,4 @@ data/eval_result.json
 __pycache__/
 *.pyc
 bench.csv
+data/probe/
