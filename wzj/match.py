@@ -1,4 +1,5 @@
 """以標準項目比對方案組合（固定套裝，或基礎＋加選）。"""
+from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date
 from itertools import combinations

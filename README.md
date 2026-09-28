@@ -2,33 +2,33 @@
 
 Proposal v0.2「第 0 階段：資料標準化驗證」的最小可跑版本。場景：台北、腸胃相關自費健檢方案。
 
-純 Python 3.11 標準函式庫，不需安裝任何套件。
+純 Python 標準函式庫（3.9 以上），不需安裝任何套件。macOS／Linux 請用 `python3`。
 
 ## 用法
 
 ```bash
 # 一句話搜尋
-python -m wzj search "台北、4 萬元內、想做無痛胃鏡加大腸鏡，女性。"
-python -m wzj search "台北 女 胃鏡大腸鏡 乳房超音波和乳房攝影都要" -v   # -v 顯示被排除的原因
+python3 -m wzj search "台北、4 萬元內、想做無痛胃鏡加大腸鏡，女性。"
+python3 -m wzj search "台北 女 胃鏡大腸鏡 乳房超音波和乳房攝影都要" -v   # -v 顯示被排除的原因
 
 # Go / No-go 指標
-python -m wzj report
+python3 -m wzj report
 
 # 探測雙北 26 家候選機構能否自動取得資料（建議在台灣主機跑）
-python -m wzj probe
-python -m wzj probe ntuh skh --no-browser   # 只測指定機構、不用瀏覽器
+python3 -m wzj probe
+python3 -m wzj probe ntuh skh --no-browser   # 只測指定機構、不用瀏覽器
 
 # 變動偵測（每週跑，滿 14 天自動判定）
-python -m wzj watch
+python3 -m wzj watch
 
 # 記錄人工標準化耗時
-python -m wzj log-time mj-gi 12
+python3 -m wzj log-time mj-gi 12
 
 # 10 個需求句的對照測試表（填入 ChatGPT／Perplexity 回答後人工評分）
-python -m wzj bench --out bench.csv
+python3 -m wzj bench --out bench.csv
 
 # LLM 抽取錯誤率（先把 LLM 輸出存成 JSON）
-python -m wzj eval --from llm_output.json
+python3 -m wzj eval --from llm_output.json
 
 # 測試
 python -m unittest -v
@@ -37,7 +37,7 @@ python -m unittest -v
 ## 網頁版
 
 ```bash
-python web/build.py        # 由 data/*.json 產生 web/index.html
+python3 web/build.py        # 由 data/*.json 產生 web/index.html
 open web/index.html        # 直接用瀏覽器開，不需要伺服器
 ```
 

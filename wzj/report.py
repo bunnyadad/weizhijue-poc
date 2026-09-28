@@ -1,4 +1,5 @@
 """第 0 階段 Go / No-go 指標。數據不足的一律標「未測」，不猜。"""
+from __future__ import annotations
 import json
 from pathlib import Path
 

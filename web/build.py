@@ -1,4 +1,5 @@
 """把 data/*.json 注入網頁模板，產出單檔 web/index.html。改資料後重跑即可。"""
+from __future__ import annotations
 import json
 from pathlib import Path
 

@@ -5,6 +5,7 @@
 2. headless 瀏覽器渲染（scripts/render.js，處理 JS 載入）
 結果分成：static（HTTP 即可）、headless（需渲染）、pdf、blocked（被擋）、no_price（抓得到但頁面沒有價格）、error。
 """
+from __future__ import annotations
 import json
 import re
 import subprocess

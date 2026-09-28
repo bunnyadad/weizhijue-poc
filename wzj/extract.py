@@ -3,6 +3,7 @@
 PoC 先不接模型：Extractor 是介面，實作留給之後接 Claude / OpenAI。
 評測可以先用「把 LLM 輸出存成 JSON」的方式跑（FileExtractor），與人工校對的 plans.json 逐欄比較。
 """
+from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 from pathlib import Path

@@ -1,4 +1,5 @@
 """變動偵測：重抓來源頁、正規化後比對 hash，累積兩週後推估維護工時。"""
+from __future__ import annotations
 import hashlib
 import html
 import json

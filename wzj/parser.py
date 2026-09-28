@@ -1,4 +1,5 @@
 """把一句需求解析成結構化條件。PoC 用規則式，之後可換成 LLM（輸出同一個 Query）。"""
+from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
