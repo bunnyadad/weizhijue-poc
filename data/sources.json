@@ -1,5 +1,5 @@
 {
-  "note": "台北市＋新北市提供自費健檢（含胃腸鏡）的候選機構與方案入口頁，2026-09-28 蒐集。tier：center=醫學中心／大型醫院、chain=健檢連鎖或專門診所、regional=區域醫院。 2026-09-28 第二輪：容器出口為美國（Google Cloud），另以 WebFetch 從另一條海外路徑交叉測試，B2 結果一致，推測為擋海外／資料中心 IP，需台灣 IP 確認。",
+  "note": "台北市＋新北市提供自費健檢（含胃腸鏡）的候選機構，2026-09-28 蒐集。海外（美國雲端）與台灣 IP（使用者本機）各測一輪；B2 待以真實瀏覽器（scripts/jev_probe.py）重測。",
   "sources": [
     {
       "id": "ntuh",
@@ -17,9 +17,9 @@
       "city": "台北",
       "tier": "center",
       "url": "https://phys.vghtpe.gov.tw/",
-      "category": "B2",
-      "finding": "HTTP 403（容器與 WebFetch 兩條海外路徑皆被擋）；搜尋引擎可見方案頁，如「基礎一日含無痛胃腸鏡及低劑量肺部電腦斷層組套」 phys.vghtpe.gov.tw/c03.php?id=6",
-      "fix": "台灣 IP 重測；仍擋則 headless"
+      "category": "B1",
+      "finding": "台灣 IP 可連線，首頁沒有價格；方案在子頁，如 phys.vghtpe.gov.tw/c03.php?id=6（無痛胃腸鏡＋LDCT 組套）",
+      "fix": "子頁爬取（jev_probe 預設模式會自動往下找）"
     },
     {
       "id": "tsgh",
@@ -28,8 +28,8 @@
       "tier": "center",
       "url": "https://wwwv.tsgh.ndmctsgh.edu.tw/unit/10043/25865",
       "category": "B2",
-      "finding": "Cloudflare 403（搜尋引擎可見方案價格：腸胃道組合 18,000–57,400）",
-      "fix": "台灣 IP＋headless；仍擋則人工每月核對"
+      "finding": "台灣 IP 仍被 Cloudflare 擋（403）；搜尋引擎可見價格，資料是公開的",
+      "fix": "真實瀏覽器（jev_probe）；仍擋則人工每月核對"
     },
     {
       "id": "mmh",
@@ -37,9 +37,9 @@
       "city": "台北",
       "tier": "center",
       "url": "https://wapps.mmh.org.tw/Health2015/Default.aspx",
-      "category": "B2",
-      "finding": "連線被重置（兩條海外路徑皆失敗）；公開資訊顯示無痛胃腸鏡加選 4,500 元（麻醉與術前評估）",
-      "fix": "台灣 IP 重測"
+      "category": "B1",
+      "finding": "台灣 IP 可連線（海外被重置），首頁 1 個價格、方案在子頁；無痛胃腸鏡加選 4,500（搜尋摘要）",
+      "fix": "子頁爬取"
     },
     {
       "id": "cathay",
@@ -58,8 +58,8 @@
       "tier": "center",
       "url": "https://www.skh.org.tw/skh/8f12b7ac15.html",
       "category": "B2",
-      "finding": "連線被重置（兩條海外路徑皆失敗）；搜尋引擎可見「精緻健檢」「精緻健檢 LDCT」等方案子頁",
-      "fix": "台灣 IP 重測"
+      "finding": "台灣 IP 為 TLS 握手中斷（SSL EOF），海外為連線重置；方案子頁存在",
+      "fix": "真實瀏覽器（jev_probe）"
     },
     {
       "id": "cgc",
@@ -68,8 +68,8 @@
       "tier": "center",
       "url": "https://www1.cgmh.org.tw/branch/cgc/Navigator/Detail?CategoryId=4&Id=120",
       "category": "B2",
-      "finding": "WAF 安全驗證攔截；官網寫可客製化、email 詢價",
-      "fix": "台灣 IP 重測；多半轉業務"
+      "finding": "台灣 IP 為憑證錯誤（部分伺服器缺中繼憑證，已內附）；海外為 WAF 攔截",
+      "fix": "重測；仍擋則轉業務（官網寫可 email 詢價）"
     },
     {
       "id": "tmuh",
@@ -88,8 +88,8 @@
       "tier": "center",
       "url": "https://wfhweb.wanfang.gov.tw/I000/index.htm",
       "category": "B2",
-      "finding": "TLS 握手逾時（兩條海外路徑皆失敗）；另有線上選方案系統 wanfanghc.wanfang.gov.tw/healthOrder/choice.jsp",
-      "fix": "台灣 IP 重測"
+      "finding": "台灣 IP 當次 DNS 查詢失敗（網域實際存在，推測為暫時性）；海外 TLS 逾時",
+      "fix": "重測；另有線上選方案系統 wanfanghc.wanfang.gov.tw"
     },
     {
       "id": "chgh",
@@ -178,8 +178,8 @@
       "tier": "center",
       "url": "https://depart.femh.org.tw/hmc/",
       "category": "B2",
-      "finding": "連線中斷（兩條海外路徑皆失敗）；組套頁 depart.femh.org.tw/HMC",
-      "fix": "台灣 IP 重測"
+      "finding": "台灣 IP 讀取逾時（網站回應慢）；海外連線中斷",
+      "fix": "已將逾時放寬為 40 秒並自動重試；再重測"
     },
     {
       "id": "shh",
@@ -227,9 +227,9 @@
       "city": "新北",
       "tier": "regional",
       "url": "https://sijhih.cgh.org.tw/rwd102/store/F1/114%E5%B9%B4%E5%81%A5%E6%AA%A2%E9%A0%85%E7%9B%AE.pdf",
-      "category": "B2",
-      "finding": "PDF（114 年健檢項目），連線被重置",
-      "fix": "台灣 IP＋PDF 解析"
+      "category": "B1",
+      "finding": "台灣 IP 可下載 PDF（114 年健檢項目）；海外被重置",
+      "fix": "PDF 轉文字＋人工核對"
     },
     {
       "id": "mmh_ts",
@@ -247,9 +247,9 @@
       "city": "新北",
       "tier": "regional",
       "url": "https://webdept.fjuh.fju.edu.tw/FjuhDep/cmltc/an-introduction/",
-      "category": "B2",
-      "finding": "網站憑證鏈不完整（缺中繼憑證）",
-      "fix": "補中繼憑證後抓取"
+      "category": "B1",
+      "finding": "網站漏送中繼憑證（TWCA SSL CA），瀏覽器會自動補、程式不會；已在 repo 內附中繼憑證",
+      "fix": "已修：data/certs 補中繼憑證"
     },
     {
       "id": "eck",
@@ -258,14 +258,14 @@
       "tier": "regional",
       "url": "https://hmc.eck.org.tw/package",
       "category": "B2",
-      "finding": "HTTP 522（來源站逾時）；另有 PDF 價目表",
-      "fix": "台灣 IP 重測＋PDF"
+      "finding": "台灣 IP 仍被擋；另有 2020 年 PDF 價目表（過期）",
+      "fix": "真實瀏覽器（jev_probe）；不行則轉業務"
     }
   ],
   "categories": {
     "A": "網路可查，一般抓取即可",
     "B1": "網路可查，需換抓法（JS／PDF／子頁）",
-    "B2": "網路可查，但海外 IP 被擋或連不上，需台灣主機重測",
+    "B2": "網路可查，但有反爬、TLS 或連線問題，需真實瀏覽器重測",
     "C": "網路資料不齊或過期，需業務介入"
   }
 }

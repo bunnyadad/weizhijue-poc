@@ -42,13 +42,13 @@ def metrics(cat: Catalog) -> list[dict]:
     src = json.loads((DATA / "sources.json").read_text("utf-8"))["sources"]
     by = {k: sum(1 for x in src if x.get("category") == k) for k in ("A", "B1", "B2", "C")}
     n = len(src)
-    low, high = by["A"] / n, (by["A"] + by["B1"] + by["B2"]) / n
+    low, mid, high = by["A"] / n, (by["A"] + by["B1"]) / n, (by["A"] + by["B1"] + by["B2"]) / n
     rows.append(dict(
         name="可自動化來源比例",
         value=f"雙北 {n} 家候選：A {by['A']}、B1 {by['B1']}、B2 {by['B2']}、C {by['C']}；"
-              f"只算 A 為 {low:.0%}，B2 在台灣 IP 可抓時最高 {high:.0%}",
-        verdict="繼續" if low >= 0.5 else "待台灣 IP 重測" if high >= 0.5 else "重新思考",
-        todo="在台灣主機跑 `python -m wzj probe` 重新分類 B2" if by["B2"] else None,
+              f"一般抓取 {low:.0%}，加上子頁／PDF／補憑證 {mid:.0%}，B2 全部解決最高 {high:.0%}",
+        verdict="繼續" if mid >= 0.5 else "待重測" if high >= 0.5 else "重新思考",
+        todo="用 scripts/jev_probe.py 在本機真實瀏覽器重測 B2" if by["B2"] else None,
     ))
 
     plans = cat.plans

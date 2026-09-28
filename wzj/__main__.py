@@ -107,10 +107,7 @@ def main(argv=None):
     elif a.cmd == "probe":
         from . import probe
         for r in probe.run(a.ids or None, not a.no_browser):
-            h = r.get("browser") or r.get("http") or {}
-            err = r.get("http_error") or r.get("browser_error") or ""
-            print(f"{r['name']}：{r['method']}｜價格 {h.get('prices', '-')}｜腸胃字樣 {h.get('gi', '-')}"
-                  + (f"｜{err[:80]}" if err and r["method"] in ("error", "blocked") else ""))
+            print(probe.summary_line(r))
         print(f"結果存於 {probe.OUT / 'result.json'}；依結果更新 data/sources.json 的 category")
     elif a.cmd == "eval":
         res = extract.evaluate(cat, extract.FileExtractor(Path(a.src)))

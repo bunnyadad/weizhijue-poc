@@ -13,6 +13,7 @@ from pathlib import Path
 from .data import DATA, Catalog
 
 SNAP = DATA / "snapshots"
+CERTS = DATA / "certs"
 UA = "Mozilla/5.0 (compatible; weizhijue-poc)"
 
 
@@ -36,11 +37,19 @@ def price_key(text: str) -> str:
     return hashlib.sha256(" ".join(prices(text)).encode()).hexdigest()[:16]
 
 
+def ssl_context() -> ssl.SSLContext:
+    """系統 CA＋repo 內附的中繼憑證；有些醫院網站漏送中繼憑證，瀏覽器會自動補，Python 不會"""
+    ctx = ssl.create_default_context()
+    for pem in sorted(CERTS.glob("*.pem")):
+        ctx.load_verify_locations(cafile=str(pem))
+    return ctx
+
+
 def fetch(url: str, timeout: int = 20, tries: int = 3) -> str:
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     for n in range(tries):
         try:
-            with urllib.request.urlopen(req, timeout=timeout, context=ssl.create_default_context()) as r:
+            with urllib.request.urlopen(req, timeout=timeout, context=ssl_context()) as r:
                 return r.read().decode(r.headers.get_content_charset() or "utf-8", "replace")
         except OSError:
             if n == tries - 1:

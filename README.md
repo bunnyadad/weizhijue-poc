@@ -18,6 +18,8 @@ python3 -m wzj report
 python3 -m wzj probe
 python3 -m wzj probe ntuh skh --no-browser   # 只測指定機構、不用瀏覽器
 
+# 用 jev-ultrafast 在本機真實 Chrome 重測被擋的來源（見下方「用 jev 探測」）
+
 # 變動偵測（每週跑，滿 14 天自動判定）
 python3 -m wzj watch
 
@@ -43,6 +45,22 @@ open web/index.html        # 直接用瀏覽器開，不需要伺服器
 
 網頁版的解析與比對邏輯與 Python 版相同（`web/template.html`），改資料後重跑 build 即可。
 
+## 用 jev 探測
+
+一般抓取被反爬、TLS 或 WAF 擋下的網站，可以改用 [jev-ultrafast](https://github.com/browser-use/jev-ultrafast) 透過本機真實 Chrome 探測。把 jev-ultrafast 與本 repo clone 在同一層，照它的 README 完成 `uv sync` 與 Chrome 連線（`uv run browser-harness --doctor`）後：
+
+```bash
+cd weizhijue-poc
+# 預設：只用 jev 的 Browser 開頁、讀文字、找一層子頁；不呼叫 LLM、不花費
+uv run --project ../jev-ultrafast --env-file ../jev-ultrafast/.env python scripts/jev_probe.py
+# 指定機構
+uv run --project ../jev-ultrafast --env-file ../jev-ultrafast/.env python scripts/jev_probe.py tsgh skh
+# 預設模式找不到價格時，讓 jev Agent 自己點到方案頁（需 TYPESAFE_API_KEY／TEXT_MODEL_API_KEY，會計費）
+uv run --project ../jev-ultrafast --env-file ../jev-ultrafast/.env python scripts/jev_probe.py tsgh --agent
+```
+
+會在你現有的 Chrome 開背景分頁，跑完自動關閉。結果存在 `data/probe/jev_result.json`，頁面文字存在 `data/probe/*.jev.txt`。
+
 ## 結構
 
 | 路徑 | 內容 |
@@ -54,7 +72,9 @@ open web/index.html        # 直接用瀏覽器開，不需要伺服器
 | `wzj/parser.py` | 一句話 → 地區／預算／性別／必要項目（規則式，可換 LLM） |
 | `wzj/match.py` | 方案組合（固定套裝、基礎＋加選）、二選一、取代、另計費用、排序 |
 | `wzj/extract.py` | LLM 抽取介面（未接模型）＋逐欄評分 |
-| `wzj/probe.py`、`scripts/render.js` | 來源探測：HTTP → headless 瀏覽器，判斷可否自動化 |
+| `wzj/probe.py`、`scripts/render.js` | 來源探測：HTTP → 子頁 → headless 瀏覽器，判斷可否自動化 |
+| `scripts/jev_probe.py` | 用 jev-ultrafast 在本機真實 Chrome 探測（可選 Agent 導航） |
+| `data/certs/` | 部分醫院網站漏送的 TWCA 中繼憑證 |
 | `wzj/watch.py` | 抓取、正規化、價格指紋比對、變動紀錄 |
 | `wzj/report.py` | 第 0 階段四個指標，數據不足一律標「未測」 |
 | `web/` | 單檔網頁版（模板＋build 腳本） |

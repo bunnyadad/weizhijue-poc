@@ -409,7 +409,7 @@ $("t-items").innerHTML = `<tr><th>分類</th><th>項目</th><th>熱門</th><th>�
 
 const SRC = D.sources.sources, CATS = D.sources.categories;
 const byCat = k => SRC.filter(x => x.category === k).length;
-const lowR = byCat("A") / SRC.length, highR = (byCat("A") + byCat("B1") + byCat("B2")) / SRC.length;
+const lowR = byCat("A") / SRC.length, midR = (byCat("A") + byCat("B1")) / SRC.length, highR = (byCat("A") + byCat("B1") + byCat("B2")) / SRC.length;
 const HAVE = new Set(Object.keys(INSTS));
 $("catgrid").innerHTML = Object.entries(CATS).map(([k, v]) => `<div class="cat"><span><span class="badge ${k}">${k}</span></span><b>${byCat(k)} 家</b><span>${esc(v)}</span></div>`).join("");
 $("t-sources").innerHTML = `<tr><th>分類</th><th>機構</th><th>地區</th><th>實測狀況</th><th>改善方式</th></tr>` +
@@ -420,7 +420,7 @@ const METRICS = [
   ["通用 AI 錯誤率", "門檻：價格或項目錯誤 ≥ 30% 才繼續", "未測。用 <code>python -m wzj bench</code> 產生 10 句對照表，填入 ChatGPT／Perplexity 回答後評分。", "na", "未測"],
   ["每筆人工標準化時間", "門檻：≤ 10 分鐘", "未測。逐筆補齊項目清單時用 <code>python -m wzj log-time</code> 記錄。", "na", "未測"],
   ["兩週變動率", "門檻：每週維護 1–2 小時可應付", "觀察中。需在一般網路每週跑 <code>python -m wzj watch</code>；已改用價格指紋比對，避免全文 hash 誤報。", "na", "觀察中"],
-  ["可自動化來源比例", "門檻：≥ 50%", `雙北 ${SRC.length} 家候選：A ${byCat("A")}、B1 ${byCat("B1")}、B2 ${byCat("B2")}、C ${byCat("C")}。只算 A 為 ${Math.round(lowR * 100)}%；B2 若在台灣 IP 可抓，最高 ${Math.round(highR * 100)}%。下一步：在台灣主機跑 <code>python -m wzj probe</code>。`, lowR >= .5 ? "go" : highR >= .5 ? "na" : "rethink", lowR >= .5 ? "繼續" : highR >= .5 ? "待重測" : "偏負面"],
+  ["可自動化來源比例", "門檻：≥ 50%", `雙北 ${SRC.length} 家候選：A ${byCat("A")}、B1 ${byCat("B1")}、B2 ${byCat("B2")}、C ${byCat("C")}。一般抓取 ${Math.round(lowR * 100)}%；加上子頁、PDF、補憑證 ${Math.round(midR * 100)}%；B2 全部解決最高 ${Math.round(highR * 100)}%。已在台灣 IP 實測一輪，B2 待以真實瀏覽器（<code>scripts/jev_probe.py</code>）重測。`, midR >= .5 ? "go" : highR >= .5 ? "na" : "rethink", midR >= .5 ? "繼續" : highR >= .5 ? "待重測" : "偏負面"],
   ["資料完整度（參考）", "", `${Object.keys(INSTS).length} 家、${PLANS.length} 筆方案；已確認欄位 ${conf}、推定 ${inf}；價格未公開 ${PLANS.filter(p => p.price == null).length} 筆。`, "na", "參考"],
 ];
 $("metrics").innerHTML = METRICS.map(([t, th, v, c, label]) => `<div class="metric"><h3>${t}${th ? `<br><small style="font-weight:400;color:var(--faint)">${th}</small>` : ""}</h3><span class="verdict ${c}">${label}</span><div class="v">${v}</div></div>`).join("");
