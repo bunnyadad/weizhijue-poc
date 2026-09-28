@@ -31,7 +31,7 @@ python3 -m wzj bench --out bench.csv
 python3 -m wzj eval --from llm_output.json
 
 # 測試
-python -m unittest -v
+python3 -m unittest -v
 ```
 
 ## 網頁版
